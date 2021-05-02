@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Test on stable dart
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: dart-lang/setup-dart@v1
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run dependency validator
+        run: |
+          dart pub global activate dependency_validator
+          dart pub global run dependency_validator:dependency_validator
+      - name: Analyze project
+        run: dart analyze --fatal-warnings --fatal-infos .
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
+      - name: Self scan
+        run: dart run bin/main.dart
