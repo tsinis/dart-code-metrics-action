@@ -58,10 +58,21 @@ String currentPathToRepoRoot() {
 void logDebugMessage(
   String message, {
   String? file,
-  String? line,
-  String? column,
+  int? line,
+  int? column,
 }) =>
     _log('debug', message, file, line, column);
+
+/// Creates a warning message and prints the message to the log.
+///
+/// You can optionally provide a filename ([file]), line number ([line]), and column ([column]) number where the warning occurred.
+void logWarningMessage(
+  String message, {
+  String? file,
+  int? line,
+  int? column,
+}) =>
+    _log('warning', message, file, line, column);
 
 void _echo(String command, {String? message, Map<String, String>? parameters}) {
   final sb = StringBuffer('::$command');
@@ -84,13 +95,13 @@ void _log(
   String command,
   String message,
   String? file,
-  String? line,
-  String? column,
+  int? line,
+  int? column,
 ) {
   final parameters = {
     if (file != null) 'file': file,
-    if (line != null) 'line': line,
-    if (column != null) 'col': column,
+    if (line != null) 'line': '$line',
+    if (column != null) 'col': '$column',
   };
 
   _echo(command, message: message, parameters: parameters);
