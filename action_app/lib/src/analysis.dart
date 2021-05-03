@@ -48,11 +48,8 @@ class Analysis {
   final RepositorySlug _repositorySlug;
   final DateTime _startTime;
 
-  Analysis._(
-    this._client,
-    this._checkRun,
-    this._repositorySlug,
-  ) : _startTime = DateTime.now();
+  Analysis._(this._client, this._checkRun, this._repositorySlug)
+      : _startTime = DateTime.now();
 
   Future<void> run() async {
     if (_checkRun == null) {
@@ -64,6 +61,31 @@ class Analysis {
       _checkRun!,
       startedAt: _startTime,
       status: CheckRunStatus.inProgress,
+    );
+  }
+
+  Future<void> cancel({required Exception cause}) async {
+    if (_checkRun == null) {
+      return;
+    }
+
+    logDebugMessage("Checkrun cancelled. Conclusion is 'CANCELLED'.");
+    await _client.checks.checkRuns.updateCheckRun(
+      _repositorySlug,
+      _checkRun!,
+      startedAt: _startTime,
+      completedAt: DateTime.now(),
+      status: CheckRunStatus.completed,
+      conclusion: isTestMode()
+          ? CheckRunConclusion.neutral
+          : CheckRunConclusion.cancelled,
+      output: CheckRunOutput(
+        title: _checkRun?.name ?? '',
+        summary:
+            'This check run has been cancelled, due to the following error:'
+            '\n\n```\n$cause\n```\n\n'
+            'Check your logs for more information.',
+      ),
     );
   }
 }
