@@ -3,6 +3,11 @@
         "CODECOV",
         "carryforward",
         "cyclomatic",
-        "lcov"
+        "interps",
+        "ints",
+        "lcov",
+        "multiline",
+        "mocktail",
+        "todos"
     ]
 }
