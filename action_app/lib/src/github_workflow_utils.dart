@@ -114,19 +114,13 @@ class GitHubWorkflowUtils {
     String? message,
     Map<String, String>? parameters,
   }) {
-    final sb = StringBuffer('::$command');
-
-    final params =
-        parameters?.entries.map((e) => '${e.key}=${e.value}').join(',');
-    if (params != null && params.isNotEmpty) {
-      sb.write(' $params');
-    }
-    sb.write('::');
-    if (message != null) {
-      sb.write(message);
+    var params =
+        parameters?.entries.map((e) => '${e.key}=${e.value}').join(',') ?? '';
+    if (params.isNotEmpty) {
+      params = ' $params';
     }
 
-    _output.writeln(sb.toString());
+    _output.writeln('::$command$params::${message ?? ''}');
   }
 
 // ignore: long-parameter-list
