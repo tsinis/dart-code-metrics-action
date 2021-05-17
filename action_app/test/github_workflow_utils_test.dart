@@ -95,6 +95,26 @@ void main() {
       });
     });
 
+    test('currentRepositorySlug returns defined slug of the repository', () {
+      expect(
+        () {
+          GitHubWorkflowUtils(environmentVariables: {}, output: output)
+              .currentRepositorySlug();
+        },
+        throwsArgumentError,
+      );
+
+      const slug = 'dart-code-checker/run-dart-code-metrics-action';
+
+      expect(
+        GitHubWorkflowUtils(
+          environmentVariables: {'GITHUB_REPOSITORY': slug},
+          output: output,
+        ).currentRepositorySlug(),
+        equals(slug),
+      );
+    });
+
     test('logDebugMessage logs passed message', () {
       const message = 'simple message';
       const path = '/project/lib/source.dart';
@@ -200,6 +220,16 @@ void main() {
           '::warning col=2::simple message',
           '::warning file=/project/lib/source.dart,line=1,col=2::simple message',
         ]),
+      );
+    });
+
+    test('startLogGroup logs command about start grouping log messages', () {
+      GitHubWorkflowUtils(environmentVariables: {}, output: output)
+          .startLogGroup('group name');
+
+      expect(
+        verify(() => output.writeln(captureAny())).captured.single,
+        equals('::group::group name'),
       );
     });
   });
