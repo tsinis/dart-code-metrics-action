@@ -95,6 +95,31 @@ void main() {
       });
     });
 
+    test('currentCommitSHA returns run commit sha taken from head', () {
+      expect(
+        () {
+          GitHubWorkflowUtils(environmentVariables: {}, output: output)
+              .currentCommitSHA();
+        },
+        throwsArgumentError,
+      );
+
+      const branchHeadSHA = '1357908642';
+
+      expect(
+        GitHubWorkflowUtils(
+          environmentVariables: {'GITHUB_SHA': branchHeadSHA},
+          output: output,
+        ).currentCommitSHA(),
+        equals(branchHeadSHA),
+      );
+
+      expect(
+        verify(() => output.writeln(captureAny())).captured.single,
+        equals('::debug::SHA that triggered the workflow: 1357908642'),
+      );
+    });
+
     test('currentRepositorySlug returns defined slug of the repository', () {
       expect(
         () {
@@ -260,6 +285,26 @@ void main() {
       expect(
         verify(() => output.writeln(captureAny())).captured.single,
         equals('::endgroup::'),
+      );
+    });
+
+    test('isTestMode returns true only for current repo', () {
+      const slug = 'dart-code-checker/run-dart-code-metrics-action';
+
+      expect(
+        GitHubWorkflowUtils(
+          environmentVariables: {'GITHUB_REPOSITORY': slug},
+          output: output,
+        ).isTestMode(),
+        isTrue,
+      );
+
+      expect(
+        GitHubWorkflowUtils(
+          environmentVariables: {'GITHUB_REPOSITORY': 'slug'},
+          output: output,
+        ).isTestMode(),
+        isFalse,
       );
     });
   });
