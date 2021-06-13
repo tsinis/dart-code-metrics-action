@@ -48,27 +48,32 @@ class GitHubWorkflowUtils {
 
     logDebugMessage('SHA that triggered the workflow: $commitSha');
 
-    final pathEventPayload = _environmentVariables['GITHUB_EVENT_PATH'];
-    if (pathEventPayload != null) {
-      final eventPayload = jsonDecode(File(pathEventPayload).readAsStringSync())
-          as Map<String, dynamic>;
+    final pullRequest = _getPullRequestJson();
+    if (pullRequest != null) {
+      final baseSha =
+          (pullRequest['base'] as Map<String, dynamic>)['sha'] as String;
+      final headSha =
+          (pullRequest['head'] as Map<String, dynamic>)['sha'] as String;
+      if (commitSha != headSha) {
+        logDebugMessage('Base SHA: $baseSha');
+        logDebugMessage('Head SHA: $headSha');
 
-      final pullRequest = eventPayload['pull_request'] as Map<String, dynamic>?;
-      if (pullRequest != null) {
-        final baseSha =
-            (pullRequest['base'] as Map<String, dynamic>)['sha'] as String;
-        final headSha =
-            (pullRequest['head'] as Map<String, dynamic>)['sha'] as String;
-        if (commitSha != headSha) {
-          logDebugMessage('Base SHA: $baseSha');
-          logDebugMessage('Head SHA: $headSha');
-
-          return headSha;
-        }
+        return headSha;
       }
     }
 
     return commitSha;
+  }
+
+  /// Returns number of current Pull Request or null
+  int? currentPullRequestNumber() {
+    final pullRequest = _getPullRequestJson();
+    if (pullRequest != null && pullRequest.containsKey('number')) {
+      return pullRequest['number'] as int;
+    }
+
+    // ignore: avoid_returning_null
+    return null;
   }
 
   /// Returns slug of the repository
@@ -168,7 +173,7 @@ class GitHubWorkflowUtils {
     _output.writeln('::$command$params::${message ?? ''}');
   }
 
-// ignore: long-parameter-list
+  // ignore: long-parameter-list
   void _log(
     String command,
     String message,
@@ -183,5 +188,17 @@ class GitHubWorkflowUtils {
     };
 
     _echo(command, message: message, parameters: parameters);
+  }
+
+  Map<String, dynamic>? _getPullRequestJson() {
+    final pathEventPayload = _environmentVariables['GITHUB_EVENT_PATH'];
+    if (pathEventPayload == null) {
+      return null;
+    }
+
+    final eventPayload = jsonDecode(File(pathEventPayload).readAsStringSync())
+        as Map<String, dynamic>;
+
+    return eventPayload['pull_request'] as Map<String, dynamic>?;
   }
 }
