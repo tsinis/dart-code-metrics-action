@@ -156,8 +156,7 @@ class GitHubWorkflowUtils {
   }
 
   bool isTestMode() =>
-      currentRepositorySlug() ==
-      'dart-code-checker/run-dart-code-metrics-action';
+      currentRepositorySlug() == 'dart-code-checker/dart-code-metrics-action';
 
   void _echo(
     String command, {
