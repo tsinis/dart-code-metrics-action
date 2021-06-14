@@ -47,6 +47,7 @@ class Arguments {
         .actionInputValue(_foldersInput)
         .split(',')
         .map((folder) => folder.trim())
+        .where((folder) => folder.isNotEmpty)
         .toSet();
 
     return Arguments._(
