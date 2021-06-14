@@ -16,5 +16,14 @@ Future<void> main(List<String> args) async {
 
   try {
     await reporting.run();
-  } on Exception catch (_) {}
+
+    workflowUtils.startLogGroup('Running Dart Code Metrics');
+  } on Exception catch (cause) {
+    try {
+      await reporting.cancel(cause: cause);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (error, stackTrace) {
+      workflowUtils.logErrorMessage('$error\n$stackTrace');
+    }
+  }
 }
