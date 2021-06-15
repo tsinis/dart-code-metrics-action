@@ -51,9 +51,9 @@ jobs:
 * Check run output:
   
   <img
-  src="https://raw.githubusercontent.com/dart-code-checker/dart-code-metrics-action/master/doc/.assets/annotation.png"
+  src="https://raw.githubusercontent.com/dart-code-checker/dart-code-metrics-action/master/doc/.assets/check_run_output.png"
   alt="annotation"
-  height="597" width="341,5"
+  height="341,5" width="597"
   align="center">
 
 * Annotation:
@@ -61,5 +61,5 @@ jobs:
   <img
   src="https://raw.githubusercontent.com/dart-code-checker/dart-code-metrics-action/master/doc/.assets/annotation.png"
   alt="annotation"
-  height="608" width="197"
+  height="197" width="608"
   align="center">
