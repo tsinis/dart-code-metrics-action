@@ -1,4 +1,4 @@
-name: Test action app
+name: Action app
 
 on: [push, pull_request]
 
@@ -8,8 +8,8 @@ env:
   INPUT_RELATIVE_PATH: "action_app"
 
 jobs:
-  test:
-    name: Test on stable dart
+  test-action-app:
+    name: Test action app
 
     runs-on: ubuntu-latest
 
