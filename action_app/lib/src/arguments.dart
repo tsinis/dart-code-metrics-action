@@ -21,7 +21,7 @@ const _pubspecYaml = 'pubspec.yaml';
 
 class Arguments {
   /// Token to call the GitHub API
-  final String githubToken;
+  final String gitHubToken;
 
   /// Head SHA of the commit associated to the current workflow
   final String commitSha;
@@ -64,7 +64,7 @@ class Arguments {
         .toSet();
 
     return Arguments._(
-      githubToken: workflowUtils.actionInputValue(_githubTokenInput),
+      gitHubToken: workflowUtils.actionInputValue(_githubTokenInput),
       commitSha: workflowUtils.currentCommitSHA(),
       repositorySlug: workflowUtils.currentRepositorySlug(),
       packagePath: packagePath,
@@ -73,7 +73,7 @@ class Arguments {
   }
 
   Arguments._({
-    required this.githubToken,
+    required this.gitHubToken,
     required this.commitSha,
     required this.repositorySlug,
     required this.packagePath,

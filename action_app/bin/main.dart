@@ -18,16 +18,9 @@ Future<void> main() async {
 
   try {
     final rootFolder = arguments.packagePath.canonicalPackagePath;
-    final pubspec = readPubspec(rootFolder);
+    final pubspecUtils = readPubspec(rootFolder);
 
-    workflowUtils.startLogGroup("Get the current package's dependencies");
-
-    final executable = pubspec.isFlutterPackage ? 'flutter' : 'dart';
-    final pubGetResult = Process.runSync(executable, ['pub', 'get']);
-    stdout.writeln(pubGetResult.stdout);
-    stderr.writeln(pubGetResult.stderr);
-
-    workflowUtils.endLogGroup();
+    _getTheTargetPackagesDependencies(workflowUtils, pubspecUtils, rootFolder);
 
     await reporting.run();
 
@@ -41,7 +34,7 @@ Future<void> main() async {
         .runCliAnalysis(foldersToAnalyze, rootFolder, config);
 
     await reporting.complete(
-      pubspec.packageName,
+      pubspecUtils.packageName,
       foldersToAnalyze,
       lintAnalyzerReport,
     );
@@ -54,5 +47,33 @@ Future<void> main() async {
     } catch (error, stackTrace) {
       workflowUtils.logErrorMessage('$error\n$stackTrace');
     }
+  }
+}
+
+void _getTheTargetPackagesDependencies(
+  GitHubWorkflowUtils workflowUtils,
+  PubSpecUtils pubSpecUtils,
+  String rootFolder,
+) {
+  workflowUtils.startLogGroup(
+    'Get the "${pubSpecUtils.packageName}" package dependencies',
+  );
+
+  final executable = pubSpecUtils.isFlutterPackage ? 'flutter' : 'dart';
+  final pubGetResult = Process.runSync(
+    executable,
+    ['pub', 'get'],
+    workingDirectory: rootFolder,
+  );
+  workflowUtils
+    ..logDebugMessage('exit code: ${pubGetResult.exitCode}')
+    ..logDebugMessage(pubGetResult.stdout.toString())
+    ..logErrorMessage(pubGetResult.stderr.toString())
+    ..endLogGroup();
+
+  if (pubGetResult.exitCode != 0) {
+    throw StateError(
+      '$executable pub get - returns ${pubGetResult.exitCode}',
+    );
   }
 }

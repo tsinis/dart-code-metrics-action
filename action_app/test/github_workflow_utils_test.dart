@@ -8,6 +8,9 @@ import 'package:test/test.dart';
 
 class IOSinkMock extends Mock implements IOSink {}
 
+const path = '/project/lib/source.dart';
+const message = 'simple message';
+
 void main() {
   group('GitHubWorkflowUtils', () {
     // ignore: close_sinks
@@ -157,36 +160,26 @@ void main() {
         throwsArgumentError,
       );
 
-      const path = '/user/builder/repository';
+      const workspacePath = '/user/builder/repository';
 
       expect(
         GitHubWorkflowUtils(
-          environmentVariables: {'GITHUB_WORKSPACE': path},
+          environmentVariables: {'GITHUB_WORKSPACE': workspacePath},
           output: output,
         ).currentPathToRepoRoot(),
-        equals(path),
+        equals(workspacePath),
       );
     });
 
     test('logDebugMessage logs passed message', () {
-      const message = 'simple message';
-      const path = '/project/lib/source.dart';
-
       GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logDebugMessage(message);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logDebugMessage(message, file: path);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logDebugMessage(message, line: 1);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logDebugMessage(message, column: 2);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logDebugMessage(
-        message,
-        file: path,
-        line: 1,
-        column: 2,
-      );
+        ..logDebugMessage('')
+        ..logDebugMessage(message)
+        ..logDebugMessage(message, file: path)
+        ..logDebugMessage(message, line: 1)
+        ..logDebugMessage(message, column: 2)
+        ..logDebugMessage(message, file: path, line: 1, column: 2)
+        ..logDebugMessage('');
 
       expect(
         verify(() => output.writeln(captureAny())).captured,
@@ -201,24 +194,14 @@ void main() {
     });
 
     test('logErrorMessage logs passed message', () {
-      const message = 'simple message';
-      const path = '/project/lib/source.dart';
-
       GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logErrorMessage(message);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logErrorMessage(message, file: path);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logErrorMessage(message, line: 1);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logErrorMessage(message, column: 2);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logErrorMessage(
-        message,
-        file: path,
-        line: 1,
-        column: 2,
-      );
+        ..logErrorMessage('')
+        ..logErrorMessage(message)
+        ..logErrorMessage(message, file: path)
+        ..logErrorMessage(message, line: 1)
+        ..logErrorMessage(message, column: 2)
+        ..logErrorMessage(message, file: path, line: 1, column: 2)
+        ..logErrorMessage('');
 
       expect(
         verify(() => output.writeln(captureAny())).captured,
@@ -233,10 +216,10 @@ void main() {
     });
 
     test('logInfoMessage logs passed message', () {
-      const message = 'simple message';
-
       GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logInfoMessage(message);
+        ..logInfoMessage('')
+        ..logInfoMessage(message)
+        ..logInfoMessage('');
 
       expect(
         verify(() => output.writeln(captureAny())).captured,
@@ -245,24 +228,14 @@ void main() {
     });
 
     test('logWarningMessage logs passed message', () {
-      const message = 'simple message';
-      const path = '/project/lib/source.dart';
-
       GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logWarningMessage(message);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logWarningMessage(message, file: path);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logWarningMessage(message, line: 1);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logWarningMessage(message, column: 2);
-      GitHubWorkflowUtils(environmentVariables: {}, output: output)
-          .logWarningMessage(
-        message,
-        file: path,
-        line: 1,
-        column: 2,
-      );
+        ..logWarningMessage('')
+        ..logWarningMessage(message)
+        ..logWarningMessage(message, file: path)
+        ..logWarningMessage(message, line: 1)
+        ..logWarningMessage(message, column: 2)
+        ..logWarningMessage(message, file: path, line: 1, column: 2)
+        ..logWarningMessage('');
 
       expect(
         verify(() => output.writeln(captureAny())).captured,

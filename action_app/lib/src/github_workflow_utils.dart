@@ -32,7 +32,7 @@ class GitHubWorkflowUtils {
       );
     }
 
-    return value ?? '';
+    return value?.trim() ?? '';
   }
 
   /// Returns head SHA of the commit associated to the current workflow
@@ -116,7 +116,9 @@ class GitHubWorkflowUtils {
     int? line,
     int? column,
   }) {
-    _log('debug', message, file, line, column);
+    if (message.isNotEmpty) {
+      _log('debug', message, file, line, column);
+    }
   }
 
   /// Creates an error message and prints the message to the log.
@@ -128,11 +130,15 @@ class GitHubWorkflowUtils {
     int? line,
     int? column,
   }) {
-    _log('error', message, file, line, column);
+    if (message.isNotEmpty) {
+      _log('error', message, file, line, column);
+    }
   }
 
   void logInfoMessage(String message) {
-    _output.writeln(message);
+    if (message.isNotEmpty) {
+      _output.writeln(message);
+    }
   }
 
   /// Creates a warning message and prints the message to the log.
@@ -144,7 +150,9 @@ class GitHubWorkflowUtils {
     int? line,
     int? column,
   }) {
-    _log('warning', message, file, line, column);
+    if (message.isNotEmpty) {
+      _log('warning', message, file, line, column);
+    }
   }
 
   void startLogGroup(String groupName) {

@@ -19,7 +19,7 @@ class Reporter {
     required Arguments arguments,
   }) async {
     final client =
-        GitHub(auth: Authentication.withToken(arguments.githubToken));
+        GitHub(auth: Authentication.withToken(arguments.gitHubToken));
     final slug = RepositorySlug.full(arguments.repositorySlug);
     try {
       final id = '${Random().nextInt(1000)}';
