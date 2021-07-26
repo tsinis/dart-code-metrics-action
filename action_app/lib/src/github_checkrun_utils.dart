@@ -1,3 +1,4 @@
+import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart' as dcm;
 import 'package:github/github.dart' as github;
 import 'package:path/path.dart' as p;
@@ -43,7 +44,7 @@ class GitHubCheckRunUtils {
       return _severityMapping[severity]!;
     }
 
-    _workflowUtils.logDebugMessage('Unknow severity: $severity');
+    debug(message: 'Unknow severity: $severity');
 
     return github.CheckRunAnnotationLevel.notice;
   }

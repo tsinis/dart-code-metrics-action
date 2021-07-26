@@ -1,22 +1,10 @@
 import 'dart:io';
 
+import 'package:actions_toolkit_dart/core.dart';
 import 'package:path/path.dart' as p;
 
-import 'github_action_input.dart';
 import 'github_workflow_utils.dart';
 import 'package_path.dart';
-
-const _foldersInput =
-    GitHubActionInput('folders', isRequired: false, canBeEmpty: true);
-
-const _githubTokenInput =
-    GitHubActionInput('github_token', isRequired: true, canBeEmpty: false);
-
-const _githubPersonalAccessTokenInput =
-    GitHubActionInput('github_pat', isRequired: false, canBeEmpty: true);
-
-const _packagePathInput =
-    GitHubActionInput('relative_path', isRequired: false, canBeEmpty: true);
 
 const _defaultFolders = ['lib'];
 
@@ -40,15 +28,17 @@ class Arguments {
   final Iterable<String> folders;
 
   factory Arguments(GitHubWorkflowUtils workflowUtils) {
+    final packageRelativePath = getInput(name: 'relative_path');
+
     final packagePath = PackagePath(
       pathToRepoRoot: workflowUtils.currentPathToRepoRoot(),
-      relativePath: workflowUtils.actionInputValue(_packagePathInput),
+      relativePath: packageRelativePath,
     );
 
     if (!Directory(packagePath.canonicalPackagePath).existsSync()) {
       throw ArgumentError.value(
         packagePath.canonicalPackagePath,
-        workflowUtils.actionInputValue(_packagePathInput),
+        packageRelativePath,
         "This directory doesn't exist in your repository",
       );
     }
@@ -57,22 +47,23 @@ class Arguments {
         .existsSync()) {
       throw ArgumentError.value(
         packagePath.canonicalPackagePath,
-        workflowUtils.actionInputValue(_packagePathInput),
+        packageRelativePath,
         "This directory doesn't contains Dart/Flutter package",
       );
     }
 
-    final folders = workflowUtils
-        .actionInputValue(_foldersInput)
+    final folders = getInput(name: 'folders')
         .split(',')
         .map((folder) => folder.trim())
         .where((folder) => folder.isNotEmpty)
         .toSet();
 
     return Arguments._(
-      gitHubToken: workflowUtils.actionInputValue(_githubTokenInput),
-      gitHubPersonalAccessTokenKey:
-          workflowUtils.actionInputValue(_githubPersonalAccessTokenInput),
+      gitHubToken: getInput(
+        name: 'github_token',
+        options: const InputOptions(required: true),
+      ),
+      gitHubPersonalAccessTokenKey: getInput(name: 'github_pat'),
       commitSha: workflowUtils.currentCommitSHA(),
       repositorySlug: workflowUtils.currentRepositorySlug(),
       packagePath: packagePath,

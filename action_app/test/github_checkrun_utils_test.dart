@@ -125,7 +125,6 @@ void main() {
           utils.severityToAnnotationLevel(dcm.Severity.warning),
           equals(github.CheckRunAnnotationLevel.warning),
         );
-        verifyNever(() => workflowUtilsMock.logDebugMessage(any()));
       },
     );
   });

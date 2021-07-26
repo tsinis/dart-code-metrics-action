@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
 import 'package:github/github.dart';
 
@@ -26,7 +27,7 @@ class AnalyzeReporter {
       final name =
           workflowUtils.isTestMode() ? '$_checkRunName ($id)' : _checkRunName;
 
-      workflowUtils.logDebugMessage('Id attributed to checkrun: $id');
+      debug(message: 'Id attributed to checkrun: $id');
 
       final checkRun = await client.checks.checkRuns.createCheckRun(
         slug,
@@ -40,10 +41,11 @@ class AnalyzeReporter {
       return AnalyzeReporter._(client, workflowUtils, checkRun, slug);
     } on GitHubError catch (e) {
       if (e.toString().contains('Resource not accessible by integration')) {
-        workflowUtils.logWarningMessage(
-          "It seems that this action doesn't have the required permissions to call the GitHub API with the token you gave. "
-          "This can occur if this repository is a fork, as in that case GitHub reduces the GITHUB_TOKEN's permissions for security reasons. "
-          'Consequently, no report will be made on GitHub.',
+        warning(
+          message:
+              "It seems that this action doesn't have the required permissions to call the GitHub API with the token you gave. "
+              "This can occur if this repository is a fork, as in that case GitHub reduces the GITHUB_TOKEN's permissions for security reasons. "
+              'Consequently, no report will be made on GitHub.',
         );
 
         return AnalyzeReporter._(client, workflowUtils, null, slug);
@@ -131,10 +133,9 @@ class AnalyzeReporter {
       ),
     );
 
-    _workflowUtils
-      ..logInfoMessage('Check Run Id: ${checkRun.id}')
-      ..logInfoMessage('Check Suite Id: ${checkRun.checkSuiteId}')
-      ..logInfoMessage('Report posted at: ${checkRun.detailsUrl}');
+    info(message: 'Check Run Id: ${checkRun.id}');
+    info(message: 'Check Suite Id: ${checkRun.checkSuiteId}');
+    info(message: 'Report posted at: ${checkRun.detailsUrl}');
   }
 
   Future<void> cancel({required Exception cause}) async {
@@ -142,8 +143,7 @@ class AnalyzeReporter {
       return;
     }
 
-    _workflowUtils
-        .logDebugMessage("Checkrun cancelled. Conclusion is 'CANCELLED'.");
+    debug(message: "Checkrun cancelled. Conclusion is 'CANCELLED'.");
     await _client.checks.checkRuns.updateCheckRun(
       _repositorySlug,
       _checkRun!,

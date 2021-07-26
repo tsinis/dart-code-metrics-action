@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'github_workflow_utils.dart';
+import 'package:actions_toolkit_dart/core.dart';
 
-void gitHubAuthSetup(String token, GitHubWorkflowUtils workflowUtils) {
-  workflowUtils.startLogGroup('Configure GitHub Auth');
+void gitHubAuthSetup(String token) {
+  startGroup(name: 'Configure GitHub Auth');
 
   final hosts = {
     'https://github.com/': 'https://x-access-token:$token@github.com/',
@@ -18,12 +18,11 @@ void gitHubAuthSetup(String token, GitHubWorkflowUtils workflowUtils) {
       host.key,
     ]);
 
-    workflowUtils
-      ..logDebugMessage('Rewrite any "${host.key}" to "${host.value}"')
-      ..logDebugMessage('return code ${gitResult.exitCode}')
-      ..logDebugMessage(gitResult.stdout.toString())
-      ..logErrorMessage(gitResult.stderr.toString());
+    debug(message: 'Rewrite any "${host.key}" to "${host.value}"');
+    debug(message: 'return code ${gitResult.exitCode}');
+    debug(message: gitResult.stdout.toString());
+    error(message: gitResult.stderr.toString());
   }
 
-  workflowUtils.endLogGroup();
+  endGroup();
 }

@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:action_app/action_app.dart';
+import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/config.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
 
 Future<void> main() async {
-  final workflowUtils = GitHubWorkflowUtils(
-    environmentVariables: Platform.environment,
-    output: stdout,
-  );
+  final workflowUtils =
+      GitHubWorkflowUtils(environmentVariables: Platform.environment);
 
   final arguments = Arguments(workflowUtils);
   final reporter = await AnalyzeReporter.create(
@@ -17,18 +16,18 @@ Future<void> main() async {
   );
 
   if (arguments.gitHubPersonalAccessTokenKey.isNotEmpty) {
-    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey, workflowUtils);
+    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey);
   }
 
   try {
     final rootFolder = arguments.packagePath.canonicalPackagePath;
     final pubspecUtils = readPubspec(rootFolder);
 
-    _getTheTargetPackagesDependencies(workflowUtils, pubspecUtils, rootFolder);
+    _getTheTargetPackagesDependencies(pubspecUtils, rootFolder);
 
     await reporter.run();
 
-    workflowUtils.startLogGroup('Running Dart Code Metrics');
+    startGroup(name: 'Running Dart Code Metrics');
 
     final foldersToAnalyze = arguments.folders;
     final options = await analysisOptionsFromFilePath(rootFolder);
@@ -43,24 +42,23 @@ Future<void> main() async {
       lintAnalyzerReport,
     );
 
-    workflowUtils.endLogGroup();
+    endGroup();
   } on Exception catch (cause) {
     try {
       await reporter.cancel(cause: cause);
       // ignore: avoid_catches_without_on_clauses
-    } catch (error, stackTrace) {
-      workflowUtils.logErrorMessage('$error\n$stackTrace');
+    } catch (exception, stackTrace) {
+      error(message: '$exception\n$stackTrace');
     }
   }
 }
 
 void _getTheTargetPackagesDependencies(
-  GitHubWorkflowUtils workflowUtils,
   PubSpecUtils pubSpecUtils,
   String rootFolder,
 ) {
-  workflowUtils.startLogGroup(
-    'Get the "${pubSpecUtils.packageName}" package dependencies',
+  startGroup(
+    name: 'Get the "${pubSpecUtils.packageName}" package dependencies',
   );
 
   final executable = pubSpecUtils.isFlutterPackage ? 'flutter' : 'dart';
@@ -69,11 +67,12 @@ void _getTheTargetPackagesDependencies(
     ['pub', 'get'],
     workingDirectory: rootFolder,
   );
-  workflowUtils
-    ..logDebugMessage('exit code: ${pubGetResult.exitCode}')
-    ..logDebugMessage(pubGetResult.stdout.toString())
-    ..logErrorMessage(pubGetResult.stderr.toString())
-    ..endLogGroup();
+
+  debug(message: 'exit code: ${pubGetResult.exitCode}');
+  debug(message: pubGetResult.stdout.toString());
+  error(message: pubGetResult.stderr.toString());
+
+  endGroup();
 
   if (pubGetResult.exitCode != 0) {
     throw StateError(
