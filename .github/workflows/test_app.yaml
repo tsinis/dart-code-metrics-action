@@ -3,6 +3,7 @@ name: Test app
 on: [push, pull_request]
 
 env:
+  INPUT_CHECK_UNUSED_FILES: false
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_GITHUB_PAT: ${{ secrets.PAT }}
   INPUT_FOLDERS: "lib"

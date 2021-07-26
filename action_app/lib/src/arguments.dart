@@ -11,6 +11,9 @@ const _defaultFolders = ['lib'];
 const _pubspecYaml = 'pubspec.yaml';
 
 class Arguments {
+  /// Is need to find unused files
+  final bool checkUnusedFiles;
+
   /// Token to call the GitHub API
   final String gitHubToken;
 
@@ -59,6 +62,7 @@ class Arguments {
         .toSet();
 
     return Arguments._(
+      checkUnusedFiles: getBooleanInput(name: 'check_unused_files'),
       gitHubToken: getInput(
         name: 'github_token',
         options: const InputOptions(required: true),
@@ -72,6 +76,7 @@ class Arguments {
   }
 
   Arguments._({
+    required this.checkUnusedFiles,
     required this.gitHubToken,
     required this.gitHubPersonalAccessTokenKey,
     required this.commitSha,

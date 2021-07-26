@@ -7,6 +7,10 @@ branding:
   icon: "search"
 
 inputs:
+  check_unused_files:
+    description: "Additional scan for find unused files in package."
+    required: false
+    default: "false"
   github_token:
     description: "Token to connect to GitHub. Use secrets.GITHUB_TOKEN."
     required: true

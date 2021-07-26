@@ -1,21 +1,17 @@
 import 'dart:math';
 
 import 'package:actions_toolkit_dart/core.dart';
-import 'package:dart_code_metrics/lint_analyzer.dart';
+import 'package:dart_code_metrics/unused_files_analyzer.dart';
 import 'package:github/github.dart';
 
 import 'arguments.dart';
-import 'github_checkrun_utils.dart';
 import 'github_workflow_utils.dart';
 
-const _checkRunName = 'Dart Code Metrics analyze report';
+const _checkRunName = 'Dart Code Metrics unused files report';
 const _homePage = 'https://github.com/dart-code-checker/dart-code-metrics';
 
-const _sourceLinesOfCodeMetricId = 'source-lines-of-code';
-const _cyclomaticComplexityMetricId = 'cyclomatic-complexity';
-
-class AnalyzeReporter {
-  static Future<AnalyzeReporter> create({
+class UnusedFilesReporter {
+  static Future<UnusedFilesReporter> create({
     required GitHubWorkflowUtils workflowUtils,
     required Arguments arguments,
   }) async {
@@ -38,7 +34,7 @@ class AnalyzeReporter {
         externalId: id,
       );
 
-      return AnalyzeReporter._(client, workflowUtils, checkRun, slug);
+      return UnusedFilesReporter._(client, workflowUtils, checkRun, slug);
     } on GitHubError catch (e) {
       if (e.toString().contains('Resource not accessible by integration')) {
         warning(
@@ -48,7 +44,7 @@ class AnalyzeReporter {
               'Consequently, no report will be made on GitHub.',
         );
 
-        return AnalyzeReporter._(client, workflowUtils, null, slug);
+        return UnusedFilesReporter._(client, workflowUtils, null, slug);
       }
       rethrow;
     }
@@ -60,7 +56,7 @@ class AnalyzeReporter {
   final RepositorySlug _repositorySlug;
   final DateTime _startTime;
 
-  AnalyzeReporter._(
+  UnusedFilesReporter._(
     this._client,
     this._workflowUtils,
     this._checkRun,
@@ -83,18 +79,13 @@ class AnalyzeReporter {
   Future<void> complete(
     String packageName,
     Iterable<String> scannedFolder,
-    Iterable<LintFileReport> report,
+    Iterable<UnusedFilesFileReport> report,
   ) async {
     if (_checkRun == null) {
       return;
     }
 
-    final checkRunUtils = GitHubCheckRunUtils(_workflowUtils);
-
-    final conclusion = report.any((file) => [
-              ...file.antiPatternCases,
-              ...file.issues,
-            ].any((issue) => issue.severity != Severity.none))
+    final conclusion = report.isNotEmpty
         ? CheckRunConclusion.failure
         : CheckRunConclusion.success;
 
@@ -122,14 +113,7 @@ class AnalyzeReporter {
       output: CheckRunOutput(
         title: title,
         summary: summary.toString(),
-        annotations: report
-            .map(
-              (file) => [...file.issues, ...file.antiPatternCases].map(
-                (issue) => checkRunUtils.issueToAnnotation(file.path, issue),
-              ),
-            )
-            .expand((issues) => issues)
-            .toList(),
+        text: _generateDetails(report),
       ),
     );
 
@@ -164,55 +148,12 @@ class AnalyzeReporter {
   }
 
   String _generateTitle(String packageName) =>
-      'Analysis report for $packageName';
+      'Unused files report result for $packageName';
 
   String _generateSummary(
     Iterable<String> scannedFolders,
-    Iterable<LintFileReport> report,
+    Iterable<UnusedFilesFileReport> report,
   ) {
-    final issuesCount = report.fold<int>(
-      0,
-      (prevValue, fileReport) =>
-          prevValue +
-          fileReport.issues.length +
-          fileReport.antiPatternCases.length,
-    );
-
-    final totalSLOC = report.fold<num>(
-      0,
-      (prevValue, fileReport) =>
-          prevValue +
-          fileReport.functions.values.fold(
-            0,
-            (prevValue, functionReport) =>
-                prevValue +
-                (functionReport.metric(_sourceLinesOfCodeMetricId)?.value ?? 0),
-          ),
-    );
-
-    final totalClasses = report.fold<int>(
-      0,
-      (prevValue, fileReport) => prevValue + fileReport.classes.keys.length,
-    );
-
-    final totalFunctions = report.fold<int>(
-      0,
-      (prevValue, fileReport) => prevValue + fileReport.functions.keys.length,
-    );
-
-    final totalCyclomatic = report.fold<num>(
-      0,
-      (prevValue, fileReport) =>
-          prevValue +
-          fileReport.functions.values.fold(
-            0,
-            (prevValue, functionReport) =>
-                prevValue +
-                (functionReport.metric(_cyclomaticComplexityMetricId)?.value ??
-                    0),
-          ),
-    );
-
     final buffer = StringBuffer()..writeln('## Summary')..writeln();
     if (scannedFolders.isNotEmpty) {
       buffer.writeln(
@@ -222,18 +163,22 @@ class AnalyzeReporter {
       );
     }
 
-    buffer
-      ..writeln('* Total scanned files: ${report.length}')
-      ..writeln('* Total lines of source code: $totalSLOC')
-      ..writeln('* Total classes: $totalClasses')
-      ..writeln()
-      ..writeln(
-        '* Average Cyclomatic Number per line of code: ${(totalCyclomatic / totalSLOC).toStringAsFixed(2)}',
-      )
-      ..writeln(
-        '* Average Source Lines of Code per method: ${totalSLOC ~/ totalFunctions}',
-      )
-      ..writeln('* Found issues: $issuesCount ${issuesCount > 0 ? '⚠' : '✅'}');
+    buffer.writeln(report.isEmpty
+        ? '* No unused files found! ✅'
+        : '* Found unused files: ${report.length} ⚠');
+
+    return buffer.toString();
+  }
+
+  String? _generateDetails(Iterable<UnusedFilesFileReport> report) {
+    if (report.isEmpty) {
+      return null;
+    }
+
+    final buffer = StringBuffer()..writeln('## Unused files:')..writeln();
+    for (final file in report) {
+      buffer.writeln('* ${file.relativePath}');
+    }
 
     return buffer.toString();
   }

@@ -3,6 +3,7 @@ name: Action app
 on: [push, pull_request]
 
 env:
+  INPUT_CHECK_UNUSED_FILES: true
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_FOLDERS: "bin, lib"
   INPUT_RELATIVE_PATH: "action_app"
