@@ -5,6 +5,7 @@ import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/config.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
 import 'package:dart_code_metrics/unused_files_analyzer.dart';
+import 'package:path/path.dart';
 
 Future<void> main() async {
   final workflowUtils =
@@ -35,7 +36,8 @@ Future<void> main() async {
 
     startGroup(name: 'Running Dart Code Metrics');
 
-    final foldersToAnalyze = arguments.folders;
+    final foldersToAnalyze =
+        _validateFoldersToAnalyze(arguments.folders, rootFolder);
     final options = await analysisOptionsFromFilePath(rootFolder);
     final lintConfig = LintConfig.fromAnalysisOptions(options);
 
@@ -101,3 +103,17 @@ void _getTheTargetPackagesDependencies(
     );
   }
 }
+
+Iterable<String> _validateFoldersToAnalyze(
+  Iterable<String> folders,
+  String rootFolder,
+) =>
+    folders.where((folder) {
+      if (!Directory(normalize(join(rootFolder, folder))).existsSync()) {
+        warning(message: 'Folder $folder not found in package.');
+
+        return false;
+      }
+
+      return true;
+    }).toSet();
