@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.1.0
 
-* Added `check-unused-files` report
+* Added `check-unused-files` report.
 
 ## 1.0.1
 
