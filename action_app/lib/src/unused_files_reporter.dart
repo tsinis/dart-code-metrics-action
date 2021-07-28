@@ -89,12 +89,8 @@ class UnusedFilesReporter {
         ? CheckRunConclusion.failure
         : CheckRunConclusion.success;
 
-    final title = _generateTitle(packageName);
-
-    final name = StringBuffer('Analysis of $packageName');
     final summary = StringBuffer();
     if (_workflowUtils.isTestMode()) {
-      name.write(' (${_checkRun?.externalId})');
       summary
         ..writeln('**THIS ACTION HAS BEEN EXECUTED IN TEST MODE.**')
         ..writeln('**Conclusion = `$conclusion`**');
@@ -111,7 +107,7 @@ class UnusedFilesReporter {
       conclusion:
           _workflowUtils.isTestMode() ? CheckRunConclusion.neutral : conclusion,
       output: CheckRunOutput(
-        title: title,
+        title: _generateTitle(packageName),
         summary: summary.toString(),
         text: _generateDetails(report),
       ),
