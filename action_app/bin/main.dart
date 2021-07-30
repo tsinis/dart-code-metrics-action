@@ -5,31 +5,32 @@ import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/config.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
 import 'package:dart_code_metrics/unused_files_analyzer.dart';
-import 'package:path/path.dart';
 
 Future<void> main() async {
   final workflowUtils =
       GitHubWorkflowUtils(environmentVariables: Platform.environment);
 
-  final arguments = Arguments(workflowUtils);
-  final analyzeReporter = await AnalyzeReporter.create(
-    workflowUtils: workflowUtils,
-    arguments: arguments,
-  );
-  final unusedFilesFileReport = await UnusedFilesReporter.create(
-    workflowUtils: workflowUtils,
-    arguments: arguments,
-  );
-
-  if (arguments.gitHubPersonalAccessTokenKey.isNotEmpty) {
-    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey);
-  }
+  late final AnalyzeReporter analyzeReporter;
+  late final UnusedFilesReporter unusedFilesFileReport;
 
   try {
+    final arguments = Arguments(workflowUtils);
+
+    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey);
+
+    analyzeReporter = await AnalyzeReporter.create(
+      workflowUtils: workflowUtils,
+      arguments: arguments,
+    );
+    unusedFilesFileReport = await UnusedFilesReporter.create(
+      workflowUtils: workflowUtils,
+      arguments: arguments,
+    );
+
     final rootFolder = arguments.packagePath.canonicalPackagePath;
     final pubspecUtils = readPubspec(rootFolder);
 
-    _getTheTargetPackagesDependencies(pubspecUtils, rootFolder);
+    getPackageDependencies(pubspecUtils, rootFolder);
 
     await analyzeReporter.run();
     await unusedFilesFileReport.run();
@@ -37,7 +38,7 @@ Future<void> main() async {
     startGroup(name: 'Running Dart Code Metrics');
 
     final foldersToAnalyze =
-        _validateFoldersToAnalyze(arguments.folders, rootFolder);
+        validateFoldersToAnalyze(arguments.folders, rootFolder);
     final options = await analysisOptionsFromFilePath(rootFolder);
     final lintConfig = LintConfig.fromAnalysisOptions(options);
 
@@ -75,45 +76,3 @@ Future<void> main() async {
     }
   }
 }
-
-void _getTheTargetPackagesDependencies(
-  PubSpecUtils pubSpecUtils,
-  String rootFolder,
-) {
-  startGroup(
-    name: 'Get the "${pubSpecUtils.packageName}" package dependencies',
-  );
-
-  final executable = pubSpecUtils.isFlutterPackage ? 'flutter' : 'dart';
-  final pubGetResult = Process.runSync(
-    executable,
-    ['pub', 'get'],
-    workingDirectory: rootFolder,
-  );
-
-  debug(message: 'exit code: ${pubGetResult.exitCode}');
-  debug(message: pubGetResult.stdout.toString());
-  error(message: pubGetResult.stderr.toString());
-
-  endGroup();
-
-  if (pubGetResult.exitCode != 0) {
-    throw StateError(
-      '$executable pub get - returns ${pubGetResult.exitCode}',
-    );
-  }
-}
-
-Iterable<String> _validateFoldersToAnalyze(
-  Iterable<String> folders,
-  String rootFolder,
-) =>
-    folders.where((folder) {
-      if (!Directory(normalize(join(rootFolder, folder))).existsSync()) {
-        warning(message: 'Folder $folder not found in package.');
-
-        return false;
-      }
-
-      return true;
-    }).toSet();

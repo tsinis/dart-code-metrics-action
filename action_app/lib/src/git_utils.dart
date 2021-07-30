@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:actions_toolkit_dart/core.dart';
 
 void gitHubAuthSetup(String token) {
+  if (token.isEmpty) {
+    return;
+  }
+
   startGroup(name: 'Configure GitHub Auth');
 
   final hosts = {
