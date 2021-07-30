@@ -16,6 +16,9 @@ abstract class GitHubCheckRunReporter {
   void report({required CheckRunConclusion conclusion, CheckRunOutput? output});
 }
 
+// The Checks API limits the number of annotations to a maximum of 50 per API request.
+const _apiLimit = 50;
+
 class GitHubTask
     implements Task<GitHubCheckRunReporter>, GitHubCheckRunReporter {
   static Future<Task<GitHubCheckRunReporter>> create({
@@ -64,7 +67,7 @@ class GitHubTask
   final DateTime _startTime;
 
   CheckRunConclusion? _checkRunConclusion;
-  CheckRunOutput? _checkRunOutput;
+  Iterable<CheckRunOutput> _checkRunOutputs = [];
 
   GitHubTask._(
     this._client,
@@ -91,18 +94,32 @@ class GitHubTask
 
       await function(this);
 
-      final run = await _client.checks.checkRuns.updateCheckRun(
-        _repositorySlug,
-        _checkRun!,
-        status: CheckRunStatus.completed,
-        completedAt: DateTime.now(),
-        conclusion: _checkRunConclusion,
-        output: _checkRunOutput,
-      );
+      CheckRun? run;
 
-      info(message: 'Check Run Id: ${run.id}');
-      info(message: 'Check Suite Id: ${run.checkSuiteId}');
-      info(message: 'Report posted at: ${run.detailsUrl}');
+      if (_checkRunOutputs.isEmpty) {
+        run = await _client.checks.checkRuns.updateCheckRun(
+          _repositorySlug,
+          _checkRun!,
+          status: CheckRunStatus.completed,
+          completedAt: DateTime.now(),
+          conclusion: _checkRunConclusion,
+        );
+      } else {
+        for (final output in _checkRunOutputs) {
+          run = await _client.checks.checkRuns.updateCheckRun(
+            _repositorySlug,
+            _checkRun!,
+            status: CheckRunStatus.completed,
+            completedAt: DateTime.now(),
+            conclusion: _checkRunConclusion,
+            output: output,
+          );
+        }
+      }
+
+      info(message: 'Check Run Id: ${run?.id}');
+      info(message: 'Check Suite Id: ${run?.checkSuiteId}');
+      info(message: 'Report posted at: ${run?.detailsUrl}');
     } on Exception catch (cause) {
       try {
         await _cancelCheckRun(cause);
@@ -122,27 +139,9 @@ class GitHubTask
     required CheckRunConclusion conclusion,
     CheckRunOutput? output,
   }) {
-    _checkRunConclusion = conclusion;
-    _checkRunOutput = output;
-
-    if (_workflowUtils.isTestMode()) {
-      _checkRunConclusion = CheckRunConclusion.neutral;
-
-      if (output != null) {
-        final summary = StringBuffer()
-          ..writeln('**THIS ACTION HAS BEEN EXECUTED IN TEST MODE.**')
-          ..writeln('**Conclusion = `$conclusion`**')
-          ..writeln(output.summary);
-
-        _checkRunOutput = CheckRunOutput(
-          title: output.title,
-          summary: summary.toString(),
-          text: output.text,
-          annotations: output.annotations,
-          images: output.images,
-        );
-      }
-    }
+    _checkRunConclusion =
+        _workflowUtils.isTestMode() ? CheckRunConclusion.neutral : conclusion;
+    _checkRunOutputs = _prepareOutput(conclusion, output);
   }
 
   Future<void> _cancelCheckRun(Exception cause) async {
@@ -163,6 +162,50 @@ class GitHubTask
             'This check run has been cancelled, due to the following error:'
             '\n\n```\n$cause\n```\n\n'
             'Check your logs for more information.',
+      ),
+    );
+  }
+
+  Iterable<CheckRunOutput> _prepareOutput(
+    CheckRunConclusion conclusion,
+    CheckRunOutput? output,
+  ) {
+    if (output == null) {
+      return [];
+    }
+
+    final summary = _workflowUtils.isTestMode()
+        ? (StringBuffer()
+              ..writeln('**THIS ACTION HAS BEEN EXECUTED IN TEST MODE.**')
+              ..writeln('**Conclusion = `$conclusion`**')
+              ..writeln(output.summary))
+            .toString()
+        : output.summary;
+
+    final annotations = output.annotations;
+
+    if (annotations == null || annotations.isEmpty) {
+      return [
+        CheckRunOutput(
+          title: output.title,
+          summary: summary,
+          text: output.text,
+          images: output.images,
+        ),
+      ];
+    }
+
+    return List.generate(
+      annotations.length ~/ _apiLimit + 1,
+      (index) => CheckRunOutput(
+        title: output.title,
+        summary: summary,
+        text: output.text,
+        annotations: annotations.sublist(
+          index * _apiLimit,
+          min((index + 1) * _apiLimit, annotations.length),
+        ),
+        images: output.images,
       ),
     );
   }

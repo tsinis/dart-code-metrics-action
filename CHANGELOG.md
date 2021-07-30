@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Support more than 50 annotations in the check run
+
 ## 1.1.0
 
 * Added `check-unused-files` report.
