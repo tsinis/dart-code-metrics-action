@@ -6,7 +6,7 @@ import 'package:github/github.dart';
 import 'arguments.dart';
 import 'github_workflow_utils.dart';
 
-const _homePage = 'https://dartcodemetrics.dev/';
+const _homePage = 'https://dartcodemetrics.dev/docs/integrations/github-action';
 
 abstract class Task<T> {
   Future<bool> run(Future<void> Function(T) function);
@@ -38,9 +38,9 @@ class GitHubTask
         slug,
         name: workflowUtils.isTestMode() ? '$checkRunName ($id)' : checkRunName,
         headSha: arguments.commitSha,
-        status: CheckRunStatus.queued,
         detailsUrl: _homePage,
         externalId: id,
+        status: CheckRunStatus.queued,
       );
 
       return GitHubTask._(client, workflowUtils, checkRun, slug);
