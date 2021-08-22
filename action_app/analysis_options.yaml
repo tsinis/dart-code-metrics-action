@@ -28,6 +28,9 @@ dart_code_metrics:
     - no-equal-then-else
     - no-object-declaration
     - prefer-conditional-expressions
+    - prefer-match-file-name:
+        exclude:
+          - test/**
     - prefer-trailing-comma
 
 linter:
