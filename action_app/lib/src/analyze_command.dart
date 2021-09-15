@@ -95,7 +95,9 @@ String _generateSummary(
         ),
   );
 
-  final buffer = StringBuffer()..writeln('## Summary')..writeln();
+  final buffer = StringBuffer()
+    ..writeln('## Summary')
+    ..writeln();
   if (scannedFolders.isNotEmpty) {
     buffer.writeln(
       scannedFolders.length == 1

@@ -34,7 +34,9 @@ String _generateSummary(
   Iterable<String> scannedFolders,
   Iterable<UnusedFilesFileReport> report,
 ) {
-  final buffer = StringBuffer()..writeln('## Summary')..writeln();
+  final buffer = StringBuffer()
+    ..writeln('## Summary')
+    ..writeln();
   if (scannedFolders.isNotEmpty) {
     buffer.writeln(
       scannedFolders.length == 1
@@ -55,7 +57,9 @@ String? _generateDetails(Iterable<UnusedFilesFileReport> report) {
     return null;
   }
 
-  final buffer = StringBuffer()..writeln('## Unused files:')..writeln();
+  final buffer = StringBuffer()
+    ..writeln('## Unused files:')
+    ..writeln();
   for (final file in report) {
     buffer.writeln('* ${file.relativePath}');
   }
