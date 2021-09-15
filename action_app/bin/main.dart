@@ -24,7 +24,8 @@ Future<void> main() async {
 
     final tasks = [
       (await GitHubTask.create(
-        checkRunName: 'Dart Code Metrics analyze report',
+        checkRunNamePattern: arguments.analyzeReportTitlePattern,
+        packageName: pubspecUtils.packageName,
         workflowUtils: workflowUtils,
         arguments: arguments,
       ))
@@ -37,7 +38,8 @@ Future<void> main() async {
               )),
       if (arguments.checkUnusedFiles)
         (await GitHubTask.create(
-          checkRunName: 'Dart Code Metrics unused files report',
+          checkRunNamePattern: arguments.unusedFilesReportTitlePattern,
+          packageName: pubspecUtils.packageName,
           workflowUtils: workflowUtils,
           arguments: arguments,
         ))

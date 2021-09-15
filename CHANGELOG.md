@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+* Add ability to customize report title
+
 ## 1.1.1
 
 * Support more than 50 annotations in the check run

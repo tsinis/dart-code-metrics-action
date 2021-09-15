@@ -23,9 +23,17 @@ inputs:
     required: false
     default: "lib"
   relative_path:
-    description: "Path of the package relatively to the root of the repository"
+    description: "Path of the package relatively to the root of the repository."
     required: false
     default: ""
+  analyze_report_title_pattern:
+    description: "Configurable analyze report title pattern."
+    required: false
+    default: "Dart Code Metrics analyze report of $packageName"
+  unused_files_report_title_pattern:
+    description: "Configurable unused files report title pattern."
+    required: false
+    default: "Dart Code Metrics unused files report of $packageName"
 
 runs:
   using: "docker"

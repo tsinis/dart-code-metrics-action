@@ -8,6 +8,8 @@ env:
   INPUT_GITHUB_PAT: ${{ secrets.PAT }}
   INPUT_FOLDERS: "lib"
   INPUT_RELATIVE_PATH: "test_app"
+  INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Analyze report of $packageName"
+  INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Unused files report of $packageName"
 
 jobs:
   test-action-app:

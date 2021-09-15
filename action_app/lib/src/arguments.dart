@@ -26,9 +26,13 @@ class Arguments {
   /// Slug of the repository
   final String repositorySlug;
 
+  final Iterable<String> folders;
+
   final PackagePath packagePath;
 
-  final Iterable<String> folders;
+  final String analyzeReportTitlePattern;
+
+  final String unusedFilesReportTitlePattern;
 
   factory Arguments(GitHubWorkflowUtils workflowUtils) {
     final packageRelativePath = getInput(name: 'relative_path');
@@ -72,6 +76,9 @@ class Arguments {
       repositorySlug: workflowUtils.currentRepositorySlug(),
       packagePath: packagePath,
       folders: folders.isNotEmpty ? folders : _defaultFolders,
+      analyzeReportTitlePattern: getInput(name: 'analyze_report_title_pattern'),
+      unusedFilesReportTitlePattern:
+          getInput(name: 'unused_files_report_title_pattern'),
     );
   }
 
@@ -83,5 +90,7 @@ class Arguments {
     required this.repositorySlug,
     required this.packagePath,
     required this.folders,
+    required this.analyzeReportTitlePattern,
+    required this.unusedFilesReportTitlePattern,
   });
 }

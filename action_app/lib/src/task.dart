@@ -22,7 +22,8 @@ const _apiLimit = 50;
 class GitHubTask
     implements Task<GitHubCheckRunReporter>, GitHubCheckRunReporter {
   static Future<Task<GitHubCheckRunReporter>> create({
-    required String checkRunName,
+    required String checkRunNamePattern,
+    required String packageName,
     required GitHubWorkflowUtils workflowUtils,
     required Arguments arguments,
   }) async {
@@ -33,6 +34,9 @@ class GitHubTask
       final id = Random().nextInt(1000).toString();
 
       debug(message: 'Id attributed to checkrun: $id');
+
+      final checkRunName =
+          checkRunNamePattern.replaceAll(r'$packageName', packageName);
 
       final checkRun = await client.checks.checkRuns.createCheckRun(
         slug,

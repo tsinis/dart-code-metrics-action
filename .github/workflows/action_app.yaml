@@ -7,6 +7,8 @@ env:
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_FOLDERS: "bin, lib"
   INPUT_RELATIVE_PATH: "action_app"
+  INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Dart Code Metrics analyze report of $packageName"
+  INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Dart Code Metrics unused files report of $packageName"
 
 jobs:
   test-action-app:
