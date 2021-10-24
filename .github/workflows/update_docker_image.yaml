@@ -23,7 +23,7 @@ jobs:
     env:
       TAG: v2
       DOCKERFILE: "scripts/Dockerfile"
-      IMAGE: dkrutskikh/dart_code_metrics_action
+      IMAGE: dkrutskikh/dart_code_metrics_action_wip
 
     steps:
       - uses: actions/checkout@v2
