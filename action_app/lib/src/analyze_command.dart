@@ -1,9 +1,5 @@
 import 'package:dart_code_metrics/config.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
-// ignore: implementation_imports
-import 'package:dart_code_metrics/src/analyzers/lint_analyzer/models/summary_lint_report_record.dart';
-// ignore: implementation_imports
-import 'package:dart_code_metrics/src/analyzers/lint_analyzer/models/summary_lint_report_record_status.dart';
 import 'package:github/github.dart';
 
 import 'github_checkrun_utils.dart';
