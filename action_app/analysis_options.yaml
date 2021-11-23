@@ -16,10 +16,13 @@ dart_code_metrics:
     maintainability-index: 50
     maximum-nesting: 5
     number-of-parameters: 5
+    source-lines-of-code: 50
   metrics-exclude:
     - test/**
   rules:
     - avoid-unused-parameters
+    - avoid-unnecessary-type-assertions
+    - avoid-unnecessary-type-casts
     - binary-expression-operand-order
     - double-literal-format
     - newline-before-return
@@ -29,6 +32,8 @@ dart_code_metrics:
     - no-equal-then-else
     - no-object-declaration
     - prefer-conditional-expressions
+    - prefer-first
+    - prefer-last
     - prefer-match-file-name:
         exclude:
           - test/**
@@ -38,7 +43,7 @@ linter:
   rules:
     - always_declare_return_types
     - always_put_control_body_on_new_line
-    - always_put_required_named_parameters_first
+    #    - always_put_required_named_parameters_first
     #    - always_specify_types
     #    - always_use_package_imports
     - avoid_annotating_with_dynamic

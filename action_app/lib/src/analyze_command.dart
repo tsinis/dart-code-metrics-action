@@ -82,9 +82,8 @@ String _summaryRecordToString(SummaryLintReportRecord record) {
   final value = record.value as Object;
   buffer.write(': ${_valueToString(value)}');
 
-  final violations = record.violations as Object?;
-  if (violations != null && violations != 0) {
-    buffer.write(' / ${_valueToString(violations)}');
+  if (record.violations > 0) {
+    buffer.write(' / ${_valueToString(record.violations)}');
   }
 
   if (record.status != SummaryLintReportRecordStatus.none) {

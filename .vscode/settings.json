@@ -1,18 +1,20 @@
 {
     "cSpell.words": [
-        "CODECOV",
-        "Dependabot",
-        "RELATIVEPATH",
         "amannn",
+        "bools",
         "carryforward",
+        "CODECOV",
         "cyclomatic",
         "dartcodemetrics",
+        "Dependabot",
         "interps",
         "ints",
         "lcov",
         "markdownlint",
         "mocktail",
         "multiline",
-        "todos"
+        "RELATIVEPATH",
+        "todos",
+        "unawaited"
     ]
 }
