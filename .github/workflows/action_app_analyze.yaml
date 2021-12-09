@@ -1,6 +1,18 @@
-name: Action app
+name: "Analyze action app"
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "action_app/**"
+      - ".github/workflows/action_app_analyze.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - "action_app/**"
+      - ".github/workflows/action_app_analyze.yaml"
 
 env:
   INPUT_CHECK_UNUSED_FILES: true
@@ -11,9 +23,47 @@ env:
   INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Dart Code Metrics unused files report of $packageName"
 
 jobs:
-  test-action-app:
-    name: Test action app
+  analysis:
+    runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: action_app
+
+    steps:
+      - name: Validate semantic changelog update
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: GetStream/verify-semantic-changelog-update@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Stable Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Run dependency validator
+        run: |
+          dart pub global activate dependency_validator
+          dart pub global run dependency_validator:dependency_validator
+
+      - name: Analyze project
+        run: dart analyze --fatal-warnings --fatal-infos .
+
+      - name: Self scan
+        run: dart run bin/main.dart
+
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
+
+  testing:
+    needs: analysis
     runs-on: ubuntu-latest
 
     defaults:
@@ -22,20 +72,17 @@ jobs:
         working-directory: action_app
 
     steps:
-      - uses: dart-lang/setup-dart@v1
-      - uses: actions/checkout@v2
+      - name: Install Stable Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Install dependencies
         run: dart pub get
-      - name: Run dependency validator
-        run: |
-          dart pub global activate dependency_validator
-          dart pub global run dependency_validator:dependency_validator
-      - name: Analyze project
-        run: dart analyze --fatal-warnings --fatal-infos .
-      - name: Verify formatting
-        run: dart format --set-exit-if-changed .
-      - name: Self scan
-        run: dart run bin/main.dart
+
       - name: Run tests
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

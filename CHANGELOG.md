@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* chore: tune Github workflow
+
 ## 1.2.0
 
 * Add ability to customize report title
