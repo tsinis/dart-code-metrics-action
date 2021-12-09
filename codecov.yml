@@ -12,3 +12,6 @@ flags:
     paths:
       - action_app/
     carryforward: true
+
+github_checks:
+  annotations: false

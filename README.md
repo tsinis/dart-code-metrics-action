@@ -74,6 +74,6 @@ jobs:
 
 If you would like to help contribute to this GitHub Action, please see [CONTRIBUTING](./CONTRIBUTING.md)
 
-## LICENCE
+## LICENSE
 
 The scripts and documentation in this project are released under the [MIT License](./LICENSE)
