@@ -1,0 +1,49 @@
+name: "Analyze test app"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "action_app/**"
+      - "test_app/**"
+      - ".github/workflows/test_app_analyze.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - "action_app/**"
+      - "test_app/**"
+      - ".github/workflows/test_app_analyze.yaml"
+
+env:
+  INPUT_CHECK_UNUSED_FILES: false
+  INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INPUT_GITHUB_PAT: ${{ secrets.PAT }}
+  INPUT_FOLDERS: "lib"
+  INPUT_RELATIVE_PATH: "test_app"
+  INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Analyze report of $packageName"
+  INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Unused files report of $packageName"
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: test_app
+
+    steps:
+      - name: Install Stable Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install action app dependencies
+        run: (cd ../action_app; dart pub get)
+
+      - name: Run action app
+        run: dart run ../action_app/bin/main.dart
