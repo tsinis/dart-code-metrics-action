@@ -6,6 +6,12 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/dkrutskikh/dart_code_metrics_action?label=runs&logo=github&logoColor=white)](https://github.com/marketplace/actions/dart-code-metrics-action/)
 <!-- markdownlint-enable MD041 -->
 
+<img
+  src="https://raw.githubusercontent.com/dart-code-checker/dart-code-metrics-action/main/doc/.assets/logo.svg"
+  alt="Dart Code Metrics logo"
+  height="150" width="150"
+  align="right">
+
 # Dart Code Metrics Action
 
 This action allows to use Dart Code Metrics from GitHub Actions.
