@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:action_app/analyze_command.dart';
 import 'package:action_app/arguments.dart';
-import 'package:action_app/git_utils.dart';
 import 'package:action_app/github_workflow_utils.dart';
 import 'package:action_app/package_utils.dart';
 import 'package:action_app/pubspec_utils.dart';
@@ -16,9 +15,6 @@ Future<void> main() async {
 
   try {
     final arguments = Arguments(workflowUtils);
-
-    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey);
-
     final rootFolder = arguments.packagePath.canonicalPackagePath;
     final pubspecUtils = readPubspec(rootFolder);
 

@@ -3,6 +3,7 @@
 ## Unreleased
 
 * chore: tune Github workflow
+* feat: migrate on pub token command
 
 ## 1.2.0
 
