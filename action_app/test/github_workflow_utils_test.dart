@@ -1,5 +1,5 @@
 @TestOn('vm')
-import 'package:action_app/src/github_workflow_utils.dart';
+import 'package:action_app/github_workflow_utils.dart';
 import 'package:test/test.dart';
 
 const path = '/project/lib/source.dart';

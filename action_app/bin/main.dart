@@ -1,6 +1,13 @@
 import 'dart:io';
 
-import 'package:action_app/action_app.dart';
+import 'package:action_app/analyze_command.dart';
+import 'package:action_app/arguments.dart';
+import 'package:action_app/git_utils.dart';
+import 'package:action_app/github_workflow_utils.dart';
+import 'package:action_app/package_utils.dart';
+import 'package:action_app/pubspec_utils.dart';
+import 'package:action_app/task.dart';
+import 'package:action_app/unused_files_command.dart';
 import 'package:actions_toolkit_dart/core.dart';
 
 Future<void> main() async {

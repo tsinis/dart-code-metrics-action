@@ -1,5 +1,5 @@
 @TestOn('vm')
-import 'package:action_app/src/pubspec_utils.dart';
+import 'package:action_app/pubspec_utils.dart';
 import 'package:test/test.dart';
 
 const _dartPackage = [

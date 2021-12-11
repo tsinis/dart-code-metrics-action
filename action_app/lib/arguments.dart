@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:actions_toolkit_dart/core.dart';
+import 'package:actions_toolkit_dart/core.dart' as toolkit;
 import 'package:path/path.dart' as p;
 
 import 'github_workflow_utils.dart';
@@ -35,7 +35,7 @@ class Arguments {
   final String unusedFilesReportTitlePattern;
 
   factory Arguments(GitHubWorkflowUtils workflowUtils) {
-    final packageRelativePath = getInput(name: 'relative_path');
+    final packageRelativePath = toolkit.getInput(name: 'relative_path');
 
     final packagePath = PackagePath(
       pathToRepoRoot: workflowUtils.currentPathToRepoRoot(),
@@ -59,26 +59,28 @@ class Arguments {
       );
     }
 
-    final folders = getInput(name: 'folders')
+    final folders = toolkit
+        .getInput(name: 'folders')
         .split(',')
         .map((folder) => folder.trim())
         .where((folder) => folder.isNotEmpty)
         .toSet();
 
     return Arguments._(
-      checkUnusedFiles: getBooleanInput(name: 'check_unused_files'),
-      gitHubToken: getInput(
+      checkUnusedFiles: toolkit.getBooleanInput(name: 'check_unused_files'),
+      gitHubToken: toolkit.getInput(
         name: 'github_token',
-        options: const InputOptions(required: true),
+        options: const toolkit.InputOptions(required: true),
       ),
-      gitHubPersonalAccessTokenKey: getInput(name: 'github_pat'),
+      gitHubPersonalAccessTokenKey: toolkit.getInput(name: 'github_pat'),
       commitSha: workflowUtils.currentCommitSHA(),
       repositorySlug: workflowUtils.currentRepositorySlug(),
       packagePath: packagePath,
       folders: folders.isNotEmpty ? folders : _defaultFolders,
-      analyzeReportTitlePattern: getInput(name: 'analyze_report_title_pattern'),
+      analyzeReportTitlePattern:
+          toolkit.getInput(name: 'analyze_report_title_pattern'),
       unusedFilesReportTitlePattern:
-          getInput(name: 'unused_files_report_title_pattern'),
+          toolkit.getInput(name: 'unused_files_report_title_pattern'),
     );
   }
 
