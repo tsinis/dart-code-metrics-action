@@ -1,13 +1,13 @@
-@TestOn('vm')
 import 'package:action_app/github_workflow_utils.dart';
 import 'package:test/test.dart';
 
 const path = '/project/lib/source.dart';
 const message = 'simple message';
+const branchHeadSHA = '1357908642';
 
 void main() {
   group('GitHubWorkflowUtils', () {
-    test('currentCommitSHA returns run commit sha taken from head', () {
+    test('currentCommitSHA throws exception', () {
       expect(
         () {
           const GitHubWorkflowUtils(environmentVariables: {})
@@ -15,26 +15,59 @@ void main() {
         },
         throwsArgumentError,
       );
+    });
 
-      const branchHeadSHA = '1357908642';
+    group('currentCommitSHA returns commit sha', () {
+      test('taken from branch head', () {
+        expect(
+          const GitHubWorkflowUtils(
+            environmentVariables: {'GITHUB_SHA': branchHeadSHA},
+          ).currentCommitSHA(),
+          equals(branchHeadSHA),
+        );
+      });
 
-      expect(
-        const GitHubWorkflowUtils(
-          environmentVariables: {'GITHUB_SHA': branchHeadSHA},
-        ).currentCommitSHA(),
-        equals(branchHeadSHA),
-      );
+      test('taken from pull request json', () {
+        expect(
+          const GitHubWorkflowUtils(
+            environmentVariables: {
+              'GITHUB_SHA': branchHeadSHA,
+              'GITHUB_EVENT_PATH': './test/resources/github_pr1_event.json',
+            },
+          ).currentCommitSHA(),
+          equals(branchHeadSHA),
+        );
 
-//      expect(
-//        verify(() => output.writeln(captureAny())).captured.single,
-//        equals('::debug::SHA that triggered the workflow: 1357908642'),
-//      );
+        expect(
+          const GitHubWorkflowUtils(
+            environmentVariables: {
+              'GITHUB_SHA': branchHeadSHA,
+              'GITHUB_EVENT_PATH': './test/resources/github_pr2_event.json',
+            },
+          ).currentCommitSHA(),
+          equals('67890'),
+        );
+      });
     });
 
     test('currentPullRequestNumber returns null', () {
       expect(
         const GitHubWorkflowUtils(environmentVariables: {})
             .currentPullRequestNumber(),
+        isNull,
+      );
+
+      expect(
+        const GitHubWorkflowUtils(environmentVariables: {
+          'GITHUB_EVENT_PATH': './test/resources/github_pr1_event.json',
+        }).currentPullRequestNumber(),
+        equals(67890),
+      );
+
+      expect(
+        const GitHubWorkflowUtils(environmentVariables: {
+          'GITHUB_EVENT_PATH': './test/resources/github_pr2_event.json',
+        }).currentPullRequestNumber(),
         isNull,
       );
     });

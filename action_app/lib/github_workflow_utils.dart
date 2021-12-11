@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:actions_toolkit_dart/core.dart';
+import 'package:actions_toolkit_dart/core.dart' as toolkit;
 
 const _envVarGitHubWorkspace = 'GITHUB_WORKSPACE';
 const _envVarGitHubRepositorySlug = 'GITHUB_REPOSITORY';
@@ -28,17 +28,17 @@ class GitHubWorkflowUtils {
       );
     }
 
-    debug(message: 'SHA that triggered the workflow: $commitSha');
+    toolkit.debug(message: 'SHA that triggered the workflow: $commitSha');
 
     final pullRequest = _getPullRequestJson();
     if (pullRequest != null) {
       final baseSha =
-          (pullRequest['base'] as Map<String, dynamic>)['sha'] as String;
+          (pullRequest['base'] as Map<String, Object?>)['sha'] as String;
       final headSha =
-          (pullRequest['head'] as Map<String, dynamic>)['sha'] as String;
+          (pullRequest['head'] as Map<String, Object?>)['sha'] as String;
       if (commitSha != headSha) {
-        debug(message: 'Base SHA: $baseSha');
-        debug(message: 'Head SHA: $headSha');
+        toolkit.debug(message: 'Base SHA: $baseSha');
+        toolkit.debug(message: 'Head SHA: $headSha');
 
         return headSha;
       }
@@ -89,7 +89,7 @@ class GitHubWorkflowUtils {
   bool isTestMode() =>
       currentRepositorySlug() == 'dart-code-checker/dart-code-metrics-action';
 
-  Map<String, dynamic>? _getPullRequestJson() {
+  Map<String, Object?>? _getPullRequestJson() {
     final pathEventPayload = _environmentVariables['GITHUB_EVENT_PATH'];
     if (pathEventPayload == null) {
       return null;
@@ -98,6 +98,6 @@ class GitHubWorkflowUtils {
     final eventPayload = jsonDecode(File(pathEventPayload).readAsStringSync())
         as Map<String, dynamic>;
 
-    return eventPayload['pull_request'] as Map<String, dynamic>?;
+    return eventPayload['pull_request'] as Map<String, Object?>?;
   }
 }
