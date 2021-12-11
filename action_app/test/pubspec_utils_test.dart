@@ -89,5 +89,22 @@ void main() {
         );
       });
     });
+
+    test('readPubspec returns parsed pubspec.yaml', () {
+      final invalidPubspec = readPubspec('..');
+
+      expect(invalidPubspec.isFlutterPackage, isFalse);
+      expect(invalidPubspec.packageName, equals('unknown'));
+
+      final actionAppPubspec = readPubspec('.');
+
+      expect(actionAppPubspec.isFlutterPackage, isFalse);
+      expect(actionAppPubspec.packageName, equals('action_app'));
+
+      final flutterExamplePubspec = readPubspec('./test/resources/');
+
+      expect(flutterExamplePubspec.isFlutterPackage, isTrue);
+      expect(flutterExamplePubspec.packageName, equals('example'));
+    });
   });
 }
