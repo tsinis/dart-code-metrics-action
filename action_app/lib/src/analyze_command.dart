@@ -51,7 +51,8 @@ Future<void> analyze(
 
 String _generateSummary(
   Iterable<LintFileReport> report,
-  Iterable<SummaryLintReportRecord> summary,
+  // TODO(krutskikh): remove nullable suffix after new version of DartCodeMetrics will be released
+  Iterable<SummaryLintReportRecord<Object?>> summary,
 ) {
   final issuesCount = report.fold<int>(
     0,
@@ -76,10 +77,10 @@ String _generateSummary(
   return buffer.toString();
 }
 
-String _summaryRecordToString(SummaryLintReportRecord record) {
+String _summaryRecordToString(SummaryLintReportRecord<Object?> record) {
   final buffer = StringBuffer()..write(record.title);
 
-  final value = record.value as Object;
+  final value = record.value;
   buffer.write(': ${_valueToString(value)}');
 
   if (record.violations > 0) {
@@ -99,7 +100,11 @@ String _summaryRecordToString(SummaryLintReportRecord record) {
   return buffer.toString();
 }
 
-String _valueToString(Object value) {
+String _valueToString(Object? value) {
+  if (value == null) {
+    return '';
+  }
+
   if (value is Iterable<Object>) {
     return value.map(_valueToString).join(', ');
   } else if (value is double) {

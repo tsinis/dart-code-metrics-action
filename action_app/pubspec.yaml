@@ -7,7 +7,7 @@ issue_tracker: https://github.com/dart-code-checker/dart-code-metrics-action/iss
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   actions_toolkit_dart: ^0.1.0
