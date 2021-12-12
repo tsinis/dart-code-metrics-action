@@ -10,7 +10,7 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
-  actions_toolkit_dart: ^0.1.0
+  actions_toolkit_dart: ^0.2.0
   dart_code_metrics: ^4.8.1
   github: ^8.2.0
   meta: ^1.7.0

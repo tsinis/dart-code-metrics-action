@@ -100,11 +100,6 @@ void main() {
 
       expect(actionAppPubspec.isFlutterPackage, isFalse);
       expect(actionAppPubspec.packageName, equals('action_app'));
-
-      final flutterExamplePubspec = readPubspec('./test/resources/');
-
-      expect(flutterExamplePubspec.isFlutterPackage, isTrue);
-      expect(flutterExamplePubspec.packageName, equals('example'));
     });
   });
 }
