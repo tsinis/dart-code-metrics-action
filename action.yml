@@ -29,11 +29,15 @@ inputs:
   analyze_report_title_pattern:
     description: "Configurable analyze report title pattern."
     required: false
-    default: "Dart Code Metrics analyze report of $packageName"
+    default: "Dart Code Metrics analyze report of $packageName."
   unused_files_report_title_pattern:
     description: "Configurable unused files report title pattern."
     required: false
-    default: "Dart Code Metrics unused files report of $packageName"
+    default: "Dart Code Metrics unused files report of $packageName."
+  pull_request_comment:
+    description: "Publish detailed report commented directly into your pull request."
+    required: false
+    default: "false"
 
 runs:
   using: "docker"

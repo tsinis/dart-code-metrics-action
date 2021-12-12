@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:actions_toolkit_dart/core.dart';
@@ -30,6 +32,7 @@ class GitHubTask
     final client =
         GitHub(auth: Authentication.withToken(arguments.gitHubToken));
     final slug = RepositorySlug.full(arguments.repositorySlug);
+
     try {
       final id = Random().nextInt(1000).toString();
 
@@ -47,7 +50,13 @@ class GitHubTask
         status: CheckRunStatus.queued,
       );
 
-      return GitHubTask._(client, workflowUtils, checkRun, slug);
+      return GitHubTask._(
+        client,
+        workflowUtils,
+        checkRun,
+        slug,
+        arguments.pullRequestComment,
+      );
     } on GitHubError catch (e) {
       if (e.toString().contains('Resource not accessible by integration')) {
         warning(
@@ -57,7 +66,7 @@ class GitHubTask
               'Consequently, no report will be made on GitHub.',
         );
 
-        return GitHubTask._(client, workflowUtils, null, slug);
+        return GitHubTask._(client, workflowUtils, null, slug, false);
       }
 
       rethrow;
@@ -69,15 +78,18 @@ class GitHubTask
   final CheckRun? _checkRun;
   final RepositorySlug _repositorySlug;
   final DateTime _startTime;
+  final bool _reportInComment;
 
   CheckRunConclusion? _checkRunConclusion;
   Iterable<CheckRunOutput> _checkRunOutputs = [];
+  String? _commentBody;
 
   GitHubTask._(
     this._client,
     this._workflowUtils,
     this._checkRun,
     this._repositorySlug,
+    this._reportInComment,
   ) : _startTime = DateTime.now();
 
   @override
@@ -119,6 +131,10 @@ class GitHubTask
             output: output,
           );
         }
+
+        if (_reportInComment) {
+          await _postComment();
+        }
       }
 
       info(message: 'Check Run Id: ${run?.id}');
@@ -145,7 +161,9 @@ class GitHubTask
   }) {
     _checkRunConclusion =
         _workflowUtils.isTestMode() ? CheckRunConclusion.neutral : conclusion;
-    _checkRunOutputs = _prepareOutput(conclusion, output);
+    _checkRunOutputs = _prepareCheckRunOutputs(conclusion, output);
+    _commentBody =
+        _prepareCommentBody(conclusion, _checkRun?.name, _checkRunOutputs);
   }
 
   Future<void> _cancelCheckRun(Exception cause) async {
@@ -170,7 +188,62 @@ class GitHubTask
     );
   }
 
-  Iterable<CheckRunOutput> _prepareOutput(
+  Future<void> _postComment() async {
+    final pullRequestNumber = _workflowUtils.currentPullRequestNumber();
+    final commentBody = _commentBody;
+
+    if (pullRequestNumber != null && commentBody != null) {
+      final comments =
+          await _getPreviousComment(pullRequestNumber, commentBody).toList();
+
+      try {
+        if (comments.isEmpty) {
+          await _client.issues
+              .createComment(_repositorySlug, pullRequestNumber, commentBody);
+        } else {
+          // TODO(krutskikh): move this code to github package
+          await _client.requestJson<Map<String, dynamic>, IssueComment>(
+            'PATCH',
+            '/repos/${_repositorySlug.fullName}/issues/comments/${comments.first.id}',
+            statusCode: StatusCodes.OK,
+            convert: IssueComment.fromJson,
+            body: GitHubJson.encode({'body': commentBody}),
+          );
+        }
+      } on Exception catch (cause) {
+        error(message: 'exception: $cause');
+      }
+    }
+  }
+
+  Stream<IssueComment> _getPreviousComment(
+    int pullRequestNumber,
+    String currentComment,
+  ) {
+    final _onlySymbolsRegex = RegExp('[^a-zA-Z]');
+    final currentHeader = LineSplitter.split(currentComment)
+        .first
+        .replaceAll(_onlySymbolsRegex, '')
+        .toLowerCase();
+
+    return _client.issues
+        .listCommentsByIssue(_repositorySlug, pullRequestNumber)
+        .where((comment) {
+      final commentBody = comment.body;
+      if (commentBody == null || commentBody.isEmpty) {
+        return false;
+      }
+
+      final commentHeader = LineSplitter.split(commentBody)
+          .first
+          .replaceAll(_onlySymbolsRegex, '')
+          .toLowerCase();
+
+      return commentHeader == currentHeader;
+    });
+  }
+
+  Iterable<CheckRunOutput> _prepareCheckRunOutputs(
     CheckRunConclusion conclusion,
     CheckRunOutput? output,
   ) {
@@ -212,5 +285,34 @@ class GitHubTask
         images: output.images,
       ),
     );
+  }
+
+  String? _prepareCommentBody(
+    CheckRunConclusion conclusion,
+    String? checkRunName,
+    Iterable<CheckRunOutput> outputs,
+  ) {
+    final buffer = StringBuffer();
+
+    if (checkRunName != null) {
+      var status = '⁉️';
+      if (conclusion == CheckRunConclusion.success) {
+        status = '✅';
+      } else if (conclusion == CheckRunConclusion.failure) {
+        status = '❌';
+      }
+
+      buffer.writeln('# $checkRunName $status');
+    }
+
+    if (outputs.isNotEmpty) {
+      if (buffer.isNotEmpty) {
+        buffer.writeln();
+      }
+
+      buffer.write(outputs.first.summary);
+    }
+
+    return buffer.toString();
   }
 }

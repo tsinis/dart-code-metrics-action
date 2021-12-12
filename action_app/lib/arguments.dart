@@ -34,6 +34,8 @@ class Arguments {
 
   final String unusedFilesReportTitlePattern;
 
+  final bool pullRequestComment;
+
   factory Arguments(GitHubWorkflowUtils workflowUtils) {
     final packageRelativePath = toolkit.getInput(name: 'relative_path');
 
@@ -81,6 +83,7 @@ class Arguments {
           toolkit.getInput(name: 'analyze_report_title_pattern'),
       unusedFilesReportTitlePattern:
           toolkit.getInput(name: 'unused_files_report_title_pattern'),
+      pullRequestComment: toolkit.getBooleanInput(name: 'pull_request_comment'),
     );
   }
 
@@ -94,5 +97,6 @@ class Arguments {
     required this.folders,
     required this.analyzeReportTitlePattern,
     required this.unusedFilesReportTitlePattern,
+    required this.pullRequestComment,
   });
 }

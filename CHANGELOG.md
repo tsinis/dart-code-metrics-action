@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-* chore: tune Github workflow
+* feat: Add ability to publish detailed report commented directly into your pull request.
 
 ## 1.2.0
 
