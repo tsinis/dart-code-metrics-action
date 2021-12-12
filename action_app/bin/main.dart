@@ -4,6 +4,7 @@ import 'package:action_app/analyze_command.dart';
 import 'package:action_app/arguments.dart';
 import 'package:action_app/github_workflow_utils.dart';
 import 'package:action_app/package_utils.dart';
+import 'package:action_app/pub_utils.dart';
 import 'package:action_app/pubspec_utils.dart';
 import 'package:action_app/task.dart';
 import 'package:action_app/unused_files_command.dart';
@@ -18,7 +19,8 @@ Future<void> main() async {
     final rootFolder = arguments.packagePath.canonicalPackagePath;
     final pubspecUtils = readPubspec(rootFolder);
 
-    getPackageDependencies(pubspecUtils, rootFolder);
+    PubUtils(flutterPackage: pubspecUtils.isFlutterPackage)
+        .getThePackageDependencies(pubspecUtils, rootFolder);
 
     startGroup(name: 'Running Dart Code Metrics');
 
