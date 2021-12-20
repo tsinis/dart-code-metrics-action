@@ -201,14 +201,11 @@ class GitHubTask
           await _client.issues
               .createComment(_repositorySlug, pullRequestNumber, commentBody);
         } else {
-          // TODO(krutskikh): move this code to github package
-          await _client.requestJson<Map<String, dynamic>, IssueComment>(
-            'PATCH',
-            '/repos/${_repositorySlug.fullName}/issues/comments/${comments.first.id}',
-            statusCode: StatusCodes.OK,
-            convert: IssueComment.fromJson,
-            body: GitHubJson.encode({'body': commentBody}),
-          );
+          final firstCommentId = comments.first.id;
+          if (firstCommentId != null) {
+            await _client.issues
+                .updateComment(_repositorySlug, firstCommentId, commentBody);
+          }
         }
       } on Exception catch (cause) {
         error(message: 'exception: $cause');
