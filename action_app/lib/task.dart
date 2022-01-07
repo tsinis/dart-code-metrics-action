@@ -308,6 +308,15 @@ class GitHubTask
       }
 
       buffer.write(outputs.first.summary);
+
+      final outputText = outputs.first.text;
+      if (outputText != null && outputText.isNotEmpty) {
+        if (buffer.isNotEmpty) {
+          buffer.writeln();
+        }
+
+        buffer.write(outputText);
+      }
     }
 
     return buffer.toString();
