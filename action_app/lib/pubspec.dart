@@ -9,10 +9,10 @@ const _pubspecYaml = 'pubspec.yaml';
 const _packageNameKey = 'name:';
 
 @immutable
-class PubSpecUtils {
+class Pubspec {
   final Iterable<String> _content;
 
-  const PubSpecUtils(this._content);
+  const Pubspec(this._content);
 
   bool get isFlutterPackage =>
       _content.any((line) => line.trim().startsWith(_flutterKey));
@@ -30,10 +30,10 @@ class PubSpecUtils {
   }
 }
 
-PubSpecUtils readPubspec(String canonicalPackagePath) {
+Pubspec readPubspec(String canonicalPackagePath) {
   final pubspec = File('$canonicalPackagePath/$_pubspecYaml');
   final pubspecContent =
       pubspec.existsSync() ? pubspec.readAsLinesSync() : <String>[];
 
-  return PubSpecUtils(pubspecContent);
+  return Pubspec(pubspecContent);
 }

@@ -1,5 +1,5 @@
 @TestOn('vm')
-import 'package:action_app/pubspec_utils.dart';
+import 'package:action_app/pubspec.dart';
 import 'package:test/test.dart';
 
 const _dartPackage = [
@@ -52,41 +52,38 @@ const _flutterPackage = [
 ];
 
 void main() {
-  group('PackageUtils', () {
+  group('Pubspec', () {
     group('isFlutterPackage returns', () {
       test('false on empty content', () {
-        const pubSpecUtils = PubSpecUtils([]);
+        const pubspec = Pubspec([]);
 
-        expect(pubSpecUtils.isFlutterPackage, isFalse);
+        expect(pubspec.isFlutterPackage, isFalse);
       });
 
       test('false on Dart package content', () {
-        const pubSpecUtils = PubSpecUtils(_dartPackage);
+        const pubspec = Pubspec(_dartPackage);
 
-        expect(pubSpecUtils.isFlutterPackage, isFalse);
+        expect(pubspec.isFlutterPackage, isFalse);
       });
 
       test('true on Flutter package content', () {
-        const pubSpecUtils = PubSpecUtils(_flutterPackage);
+        const pubspec = Pubspec(_flutterPackage);
 
-        expect(pubSpecUtils.isFlutterPackage, isTrue);
+        expect(pubspec.isFlutterPackage, isTrue);
       });
     });
 
     group('packageName returns', () {
       test('"unknown" on empty content', () {
-        const pubSpecUtils = PubSpecUtils([]);
+        const pubspec = Pubspec([]);
 
-        expect(pubSpecUtils.packageName, equals('unknown'));
+        expect(pubspec.packageName, equals('unknown'));
       });
 
       test('package name', () {
-        const pubSpecUtils = PubSpecUtils(_dartPackage);
+        const pubspec = Pubspec(_dartPackage);
 
-        expect(
-          pubSpecUtils.packageName,
-          equals('action_app'),
-        );
+        expect(pubspec.packageName, equals('action_app'));
       });
     });
 

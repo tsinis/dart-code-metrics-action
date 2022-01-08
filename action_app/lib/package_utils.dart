@@ -3,30 +3,26 @@ import 'dart:io';
 import 'package:actions_toolkit_dart/core.dart';
 import 'package:path/path.dart';
 
-import 'pubspec_utils.dart';
+import 'pubspec.dart';
+import 'services/system_process_runner.dart';
 
-void getPackageDependencies(PubSpecUtils pubSpecUtils, String rootFolder) {
-  startGroup(
-    name: 'Get the "${pubSpecUtils.packageName}" package dependencies',
-  );
+void getPackageDependencies(
+  Pubspec pubspec,
+  String rootFolder,
+  SystemProcessRunner processRunner,
+) {
+  startGroup(name: 'Get the "${pubspec.packageName}" package dependencies');
 
-  final executable = pubSpecUtils.isFlutterPackage ? 'flutter' : 'dart';
-  final pubGetResult = Process.runSync(
-    executable,
-    ['pub', 'get'],
+  final result = processRunner.run(
+    pubspec.isFlutterPackage ? 'flutter' : 'dart',
+    arguments: ['pub', 'get'],
     workingDirectory: rootFolder,
   );
 
-  debug(message: 'exit code: ${pubGetResult.exitCode}');
-  debug(message: pubGetResult.stdout.toString());
-  error(message: pubGetResult.stderr.toString());
-
   endGroup();
 
-  if (pubGetResult.exitCode != 0) {
-    throw StateError(
-      '$executable pub get - returns ${pubGetResult.exitCode}',
-    );
+  if (result.exitCode != 0) {
+    throw StateError('${result.execString} - returns ${result.exitCode}');
   }
 }
 

@@ -15,3 +15,7 @@ build/
 
 # Directory created by dartdoc
 doc/api/
+
+# Dart tests related
+/coverage/
+/reports/

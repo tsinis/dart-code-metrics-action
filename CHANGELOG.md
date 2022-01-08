@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* chore: tune GitHub workflow
+
 ## 1.3.0
 
 * feat: Add ability to publish detailed report commented directly into your pull request.
