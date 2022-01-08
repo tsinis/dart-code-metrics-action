@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
 
 * chore: tune GitHub workflow
 * feat: Add `check_unused_files_folders` parameter.
