@@ -3,6 +3,7 @@
 ## Unreleased
 
 * chore: tune GitHub workflow
+* feat: Add `check_unused_files_folders` parameter.
 
 ## 1.3.0
 

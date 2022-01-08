@@ -15,20 +15,25 @@ Future<void> main() async {
   final workflowUtils =
       GitHubWorkflowUtils(environmentVariables: Platform.environment);
 
+  final processRunner = SystemProcessRunner();
+
   try {
     final arguments = Arguments(workflowUtils);
 
-    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey);
+    gitHubAuthSetup(arguments.gitHubPersonalAccessTokenKey, processRunner);
 
     final rootFolder = arguments.packagePath.canonicalPackagePath;
     final pubspecUtils = readPubspec(rootFolder);
 
-    getPackageDependencies(pubspecUtils, rootFolder, SystemProcessRunner());
+    getPackageDependencies(pubspecUtils, rootFolder, processRunner);
 
     startGroup(name: 'Running Dart Code Metrics');
 
     final foldersToAnalyze =
         validateFoldersToAnalyze(arguments.folders, rootFolder);
+
+    final foldersToScanForUnusedFiles =
+        validateFoldersToAnalyze(arguments.checkUnusedFilesFolders, rootFolder);
 
     final tasks = [
       (await GitHubTask.create(
@@ -54,7 +59,7 @@ Future<void> main() async {
             .run((reporter) => unusedFiles(
                   pubspecUtils.packageName,
                   rootFolder,
-                  foldersToAnalyze,
+                  foldersToScanForUnusedFiles,
                   reporter,
                 )),
     ];

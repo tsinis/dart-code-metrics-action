@@ -26,6 +26,9 @@ inputs:
     description: "Path of the package relatively to the root of the repository."
     required: false
     default: ""
+  check_unused_files_folders:
+    description: "List of folders whose contents will be scanned for find unused files."
+    required: false
   analyze_report_title_pattern:
     description: "Configurable analyze report title pattern."
     required: false

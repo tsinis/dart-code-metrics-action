@@ -1,8 +1,8 @@
-import 'dart:io';
-
 import 'package:actions_toolkit_dart/core.dart';
 
-void gitHubAuthSetup(String token) {
+import 'services/system_process_runner.dart';
+
+void gitHubAuthSetup(String token, SystemProcessRunner processRunner) {
   if (token.isEmpty) {
     return;
   }
@@ -15,17 +15,18 @@ void gitHubAuthSetup(String token) {
   };
 
   for (final host in hosts.entries) {
-    final gitResult = Process.runSync('git', [
-      'config',
-      '--global',
-      'url.${host.value}.insteadOf',
-      host.key,
-    ]);
+    final gitResult = processRunner.run(
+      'git',
+      arguments: [
+        'config',
+        '--global',
+        'url.${host.value}.insteadOf',
+        host.key,
+      ],
+    );
 
     debug(message: 'Rewrite any "${host.key}" to "${host.value}"');
     debug(message: 'return code ${gitResult.exitCode}');
-    debug(message: gitResult.stdout.toString());
-    error(message: gitResult.stderr.toString());
   }
 
   endGroup();

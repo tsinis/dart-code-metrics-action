@@ -30,6 +30,9 @@ class Arguments {
 
   final PackagePath packagePath;
 
+  /// Folders whose contents will be scanned for find unused files
+  final Iterable<String> checkUnusedFilesFolders;
+
   final String analyzeReportTitlePattern;
 
   final String unusedFilesReportTitlePattern;
@@ -61,12 +64,14 @@ class Arguments {
       );
     }
 
-    final folders = toolkit
-        .getInput(name: 'folders')
-        .split(',')
-        .map((folder) => folder.trim())
-        .where((folder) => folder.isNotEmpty)
-        .toSet();
+    final folders = _parseFoldersList(toolkit.getInput(name: 'folders'));
+
+    final unusedFilesFolders =
+        toolkit.getInput(name: 'check_unused_files_folders').isNotEmpty
+            ? _parseFoldersList(
+                toolkit.getInput(name: 'check_unused_files_folders'),
+              )
+            : folders;
 
     return Arguments._(
       checkUnusedFiles: toolkit.getBooleanInput(name: 'check_unused_files'),
@@ -77,8 +82,9 @@ class Arguments {
       gitHubPersonalAccessTokenKey: toolkit.getInput(name: 'github_pat'),
       commitSha: workflowUtils.currentCommitSHA(),
       repositorySlug: workflowUtils.currentRepositorySlug(),
-      packagePath: packagePath,
       folders: folders.isNotEmpty ? folders : _defaultFolders,
+      packagePath: packagePath,
+      checkUnusedFilesFolders: unusedFilesFolders,
       analyzeReportTitlePattern:
           toolkit.getInput(name: 'analyze_report_title_pattern'),
       unusedFilesReportTitlePattern:
@@ -93,10 +99,17 @@ class Arguments {
     required this.gitHubPersonalAccessTokenKey,
     required this.commitSha,
     required this.repositorySlug,
-    required this.packagePath,
     required this.folders,
+    required this.packagePath,
+    required this.checkUnusedFilesFolders,
     required this.analyzeReportTitlePattern,
     required this.unusedFilesReportTitlePattern,
     required this.pullRequestComment,
   });
 }
+
+Iterable<String> _parseFoldersList(String folders) => folders
+    .split(',')
+    .map((folder) => folder.trim())
+    .where((folder) => folder.isNotEmpty)
+    .toSet();
