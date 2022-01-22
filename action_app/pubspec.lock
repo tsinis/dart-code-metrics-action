@@ -91,7 +91,7 @@ packages:
       name: coverage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "1.1.0"
   crypto:
     dependency: transitive
     description:
@@ -109,10 +109,12 @@ packages:
   dart_code_metrics:
     dependency: "direct main"
     description:
-      name: dart_code_metrics
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.9.1"
+      path: "."
+      ref: add-version-flag
+      resolved-ref: fe1186c608953055c16fa8530ff7ecc6c7b790ab
+      url: "git@github.com:dart-code-checker/dart-code-metrics.git"
+    source: git
+    version: "4.10.0-dev.2"
   dart_style:
     dependency: transitive
     description:
@@ -322,7 +324,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.1"
+    version: "1.8.2"
   stack_trace:
     dependency: transitive
     description:
