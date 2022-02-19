@@ -3,6 +3,7 @@
         "amannn",
         "bools",
         "carryforward",
+        "checkrun",
         "CODECOV",
         "cyclomatic",
         "dartcodemetrics",
@@ -14,8 +15,12 @@
         "markdownlint",
         "mocktail",
         "multiline",
+        "nullsafety",
+        "pubspec",
         "RELATIVEPATH",
+        "sublist",
         "todos",
-        "unawaited"
+        "unawaited",
+        "writeln"
     ]
 }

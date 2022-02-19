@@ -217,10 +217,10 @@ class GitHubTask
     int pullRequestNumber,
     String currentComment,
   ) {
-    final _onlySymbolsRegex = RegExp('[^a-zA-Z]');
+    final onlySymbolsRegex = RegExp('[^a-zA-Z]');
     final currentHeader = LineSplitter.split(currentComment)
         .first
-        .replaceAll(_onlySymbolsRegex, '')
+        .replaceAll(onlySymbolsRegex, '')
         .toLowerCase();
 
     return _client.issues
@@ -233,7 +233,7 @@ class GitHubTask
 
       final commentHeader = LineSplitter.split(commentBody)
           .first
-          .replaceAll(_onlySymbolsRegex, '')
+          .replaceAll(onlySymbolsRegex, '')
           .toLowerCase();
 
       return commentHeader == currentHeader;
