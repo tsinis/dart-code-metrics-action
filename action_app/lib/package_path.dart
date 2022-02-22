@@ -12,7 +12,7 @@ class PackagePath {
   })  : _pathToRepoRoot = pathToRepoRoot,
         _relativePath = relativePath;
 
-  /// Canonical path to the package to analyze
+  /// Canonical path to the package to analyze.
   String get canonicalPackagePath =>
       p.canonicalize('$_pathToRepoRoot/$_relativePath');
 }

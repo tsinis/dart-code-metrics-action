@@ -51,8 +51,7 @@ Future<void> analyze(
 
 String _generateSummary(
   Iterable<LintFileReport> report,
-  // TODO(krutskikh): remove nullable suffix after new version of DartCodeMetrics will be released
-  Iterable<SummaryLintReportRecord<Object?>> summary,
+  Iterable<SummaryLintReportRecord<Object>> summary,
 ) {
   final issuesCount = report.fold<int>(
     0,

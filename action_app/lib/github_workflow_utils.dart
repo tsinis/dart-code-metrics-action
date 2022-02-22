@@ -17,7 +17,7 @@ class GitHubWorkflowUtils {
     required Map<String, String> environmentVariables,
   }) : _environmentVariables = environmentVariables;
 
-  /// Returns head SHA of the commit associated to the current workflow
+  /// Returns head SHA of the commit associated to the current workflow.
   String currentCommitSHA() {
     final commitSha = _environmentVariables[_envVarGitHubSHA];
     if (commitSha == null) {
@@ -47,7 +47,7 @@ class GitHubWorkflowUtils {
     return commitSha;
   }
 
-  /// Returns number of current Pull Request or null
+  /// Returns number of current Pull Request or null.
   int? currentPullRequestNumber() {
     final pullRequest = _getPullRequestJson();
     if (pullRequest != null && pullRequest.containsKey('number')) {
@@ -58,7 +58,7 @@ class GitHubWorkflowUtils {
     return null;
   }
 
-  /// Returns slug of the repository
+  /// Returns slug of the repository.
   String currentRepositorySlug() {
     final repoPath = _environmentVariables[_envVarGitHubRepositorySlug];
     if (repoPath == null) {
@@ -72,7 +72,7 @@ class GitHubWorkflowUtils {
     return repoPath;
   }
 
-  /// Path to the folder containing the entire repository
+  /// Path to the folder containing the entire repository.
   String currentPathToRepoRoot() {
     final repoPath = _environmentVariables[_envVarGitHubWorkspace];
     if (repoPath == null) {

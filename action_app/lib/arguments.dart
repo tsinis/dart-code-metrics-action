@@ -11,26 +11,26 @@ const _defaultFolders = ['lib'];
 const _pubspecYaml = 'pubspec.yaml';
 
 class Arguments {
-  /// Is need to find unused files
+  /// Is need to find unused files.
   final bool checkUnusedFiles;
 
-  /// Token to call the GitHub API
+  /// Token to call the GitHub API.
   final String gitHubToken;
 
-  /// Token for access to private repos on GitHub
+  /// Token for access to private repos on GitHub.
   final String gitHubPersonalAccessTokenKey;
 
-  /// Head SHA of the commit associated to the current workflow
+  /// Head SHA of the commit associated to the current workflow.
   final String commitSha;
 
-  /// Slug of the repository
+  /// Slug of the repository.
   final String repositorySlug;
 
   final Iterable<String> folders;
 
   final PackagePath packagePath;
 
-  /// Folders whose contents will be scanned for find unused files
+  /// Folders whose contents will be scanned for find unused files.
   final Iterable<String> checkUnusedFilesFolders;
 
   final String analyzeReportTitlePattern;
