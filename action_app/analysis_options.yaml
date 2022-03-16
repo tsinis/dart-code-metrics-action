@@ -32,6 +32,7 @@ dart_code_metrics:
   metrics-exclude:
     - test/**
   rules:
+    - avoid-collection-methods-with-unrelated-types
     - avoid-dynamic:
         exclude:
           - test/**
@@ -59,6 +60,7 @@ dart_code_metrics:
           - ok
     - prefer-correct-type-name
     - prefer-first
+    - prefer-immediate-return
     - prefer-last
     - prefer-match-file-name:
         exclude:
