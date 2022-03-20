@@ -55,7 +55,7 @@ class GitHubTask
         workflowUtils,
         checkRun,
         slug,
-        arguments.pullRequestComment,
+        arguments.publishReportAsComment,
       );
     } on GitHubError catch (e) {
       if (e.toString().contains('Resource not accessible by integration')) {
@@ -143,8 +143,7 @@ class GitHubTask
     } on Exception catch (cause) {
       try {
         await _cancelCheckRun(cause);
-        // ignore: avoid_catches_without_on_clauses
-      } catch (exception, stackTrace) {
+      } on Exception catch (exception, stackTrace) {
         error(message: '$exception\n$stackTrace');
       }
 

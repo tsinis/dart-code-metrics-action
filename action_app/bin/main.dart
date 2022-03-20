@@ -48,6 +48,7 @@ Future<void> main() async {
                 foldersToAnalyze,
                 reporter,
                 workflowUtils,
+                arguments,
               )),
       if (arguments.checkUnusedFiles)
         (await GitHubTask.create(
@@ -67,8 +68,7 @@ Future<void> main() async {
     await Future.wait(tasks);
 
     endGroup();
-    // ignore: avoid_catches_without_on_clauses
-  } catch (exception, stackTrace) {
+  } on Exception catch (exception, stackTrace) {
     error(message: '$exception\n$stackTrace');
   }
 }

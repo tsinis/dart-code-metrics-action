@@ -11,33 +11,47 @@ const _defaultFolders = ['lib'];
 const _pubspecYaml = 'pubspec.yaml';
 
 class Arguments {
-  /// Is need to find unused files.
-  final bool checkUnusedFiles;
-
   /// Token to call the GitHub API.
   final String gitHubToken;
 
   /// Token for access to private repos on GitHub.
   final String gitHubPersonalAccessTokenKey;
 
+  /// List of folders whose contents will be scanned.
+  final Iterable<String> folders;
+
+  /// Path of the package relatively to the root of the repository.
+  final PackagePath packagePath;
+
+  /// Is publish detailed report as commented directly into pull request.
+  final bool publishReportAsComment;
+
+  /// Configurable analyze report title pattern.
+  final String analyzeReportTitlePattern;
+
+  /// Treat warning level issues as fatal.
+  final bool fatalWarnings;
+
+  /// Treat performance level issues as fatal.
+  final bool fatalPerformance;
+
+  /// Treat style level issues as fatal.
+  final bool fatalStyle;
+
+  /// Is need to find unused files.
+  final bool checkUnusedFiles;
+
+  /// Folders whose contents will be scanned for find unused files.
+  final Iterable<String> checkUnusedFilesFolders;
+
+  /// Configurable unused files report title pattern.
+  final String unusedFilesReportTitlePattern;
+
   /// Head SHA of the commit associated to the current workflow.
   final String commitSha;
 
   /// Slug of the repository.
   final String repositorySlug;
-
-  final Iterable<String> folders;
-
-  final PackagePath packagePath;
-
-  /// Folders whose contents will be scanned for find unused files.
-  final Iterable<String> checkUnusedFilesFolders;
-
-  final String analyzeReportTitlePattern;
-
-  final String unusedFilesReportTitlePattern;
-
-  final bool pullRequestComment;
 
   factory Arguments(GitHubWorkflowUtils workflowUtils) {
     final packageRelativePath = toolkit.getInput(name: 'relative_path');
@@ -74,37 +88,44 @@ class Arguments {
             : folders;
 
     return Arguments._(
-      checkUnusedFiles: toolkit.getBooleanInput(name: 'check_unused_files'),
       gitHubToken: toolkit.getInput(
         name: 'github_token',
         options: const toolkit.InputOptions(required: true),
       ),
       gitHubPersonalAccessTokenKey: toolkit.getInput(name: 'github_pat'),
-      commitSha: workflowUtils.currentCommitSHA(),
-      repositorySlug: workflowUtils.currentRepositorySlug(),
       folders: folders.isNotEmpty ? folders : _defaultFolders,
       packagePath: packagePath,
-      checkUnusedFilesFolders: unusedFilesFolders,
+      publishReportAsComment:
+          toolkit.getBooleanInput(name: 'pull_request_comment'),
       analyzeReportTitlePattern:
           toolkit.getInput(name: 'analyze_report_title_pattern'),
+      fatalWarnings: toolkit.getBooleanInput(name: 'fatal_warnings'),
+      fatalPerformance: toolkit.getBooleanInput(name: 'fatal_performance'),
+      fatalStyle: toolkit.getBooleanInput(name: 'fatal_style'),
+      checkUnusedFiles: toolkit.getBooleanInput(name: 'check_unused_files'),
+      checkUnusedFilesFolders: unusedFilesFolders,
       unusedFilesReportTitlePattern:
           toolkit.getInput(name: 'unused_files_report_title_pattern'),
-      pullRequestComment: toolkit.getBooleanInput(name: 'pull_request_comment'),
+      commitSha: workflowUtils.currentCommitSHA(),
+      repositorySlug: workflowUtils.currentRepositorySlug(),
     );
   }
 
   Arguments._({
-    required this.checkUnusedFiles,
     required this.gitHubToken,
     required this.gitHubPersonalAccessTokenKey,
-    required this.commitSha,
-    required this.repositorySlug,
     required this.folders,
     required this.packagePath,
-    required this.checkUnusedFilesFolders,
+    required this.publishReportAsComment,
     required this.analyzeReportTitlePattern,
+    required this.fatalWarnings,
+    required this.fatalPerformance,
+    required this.fatalStyle,
+    required this.checkUnusedFiles,
+    required this.checkUnusedFilesFolders,
     required this.unusedFilesReportTitlePattern,
-    required this.pullRequestComment,
+    required this.commitSha,
+    required this.repositorySlug,
   });
 }
 

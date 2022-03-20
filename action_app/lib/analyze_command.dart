@@ -1,17 +1,22 @@
+import 'package:actions_toolkit_dart/core.dart';
 import 'package:dart_code_metrics/config.dart';
 import 'package:dart_code_metrics/lint_analyzer.dart';
 import 'package:github/github.dart';
 
+import 'arguments.dart';
 import 'github_checkrun_utils.dart';
 import 'github_workflow_utils.dart';
+import 'report_utils.dart';
 import 'task.dart';
 
+// ignore: long-parameter-list
 Future<void> analyze(
   String packageName,
   String rootFolder,
   Iterable<String> foldersToAnalyze,
   GitHubCheckRunReporter reporter,
   GitHubWorkflowUtils workflowUtils,
+  Arguments arguments,
 ) async {
   final options = await analysisOptionsFromFilePath(rootFolder);
   final lintConfig = LintConfig.fromAnalysisOptions(options);
@@ -25,10 +30,25 @@ Future<void> analyze(
 
   final summary = analyzer.getSummary(report);
 
-  final conclusion = report.any((file) => [
-            ...file.antiPatternCases,
-            ...file.issues,
-          ].any((issue) => issue.severity != Severity.none))
+  final conclusion = isReportContainIssueWithTargetSeverity(
+            report: report,
+            severity: Severity.error,
+          ) ||
+          (arguments.fatalWarnings &&
+              isReportContainIssueWithTargetSeverity(
+                report: report,
+                severity: Severity.warning,
+              )) ||
+          (arguments.fatalPerformance &&
+              isReportContainIssueWithTargetSeverity(
+                report: report,
+                severity: Severity.performance,
+              )) ||
+          (arguments.fatalStyle &&
+              isReportContainIssueWithTargetSeverity(
+                report: report,
+                severity: Severity.style,
+              ))
       ? CheckRunConclusion.failure
       : CheckRunConclusion.success;
 
@@ -47,6 +67,10 @@ Future<void> analyze(
           .toList(),
     ),
   );
+
+  if (conclusion == CheckRunConclusion.failure) {
+    setFailed(message: 'Found fatal issues!');
+  }
 }
 
 String _generateSummary(

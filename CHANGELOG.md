@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0
+
+* feat: Add `fatal_warnings`, `fatal_performance` and `fatal_style` parameters.
+
 ## 1.4.0
 
 * chore: tune GitHub workflow

@@ -17,12 +17,16 @@ on:
       - ".github/workflows/test_app_analyze.yaml"
 
 env:
-  INPUT_CHECK_UNUSED_FILES: false
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_GITHUB_PAT: ${{ secrets.PAT }}
   INPUT_FOLDERS: "lib"
   INPUT_RELATIVE_PATH: "test_app"
+  INPUT_PULL_REQUEST_COMMENT: false
   INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Analyze report of $packageName"
+  INPUT_FATAL_WARNINGS: false
+  INPUT_FATAL_PERFORMANCE: false
+  INPUT_FATAL_STYLE: false
+  INPUT_CHECK_UNUSED_FILES: false
   INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Unused files report of $packageName"
 
 jobs:

@@ -15,14 +15,16 @@ on:
       - "action_app/**"
 
 env:
-  INPUT_CHECK_UNUSED_FILES: true
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_FOLDERS: "bin, lib"
   INPUT_RELATIVE_PATH: "action_app"
-  INPUT_CHECK_UNUSED_FILES_FOLDERS: "lib"
-  INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Dart Code Metrics analyze report of $packageName"
-  INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Dart Code Metrics unused files report of $packageName"
   INPUT_PULL_REQUEST_COMMENT: true
+  INPUT_ANALYZE_REPORT_TITLE_PATTERN: "Dart Code Metrics analyze report of $packageName"
+  INPUT_FATAL_WARNINGS: true
+  INPUT_FATAL_PERFORMANCE: true
+  INPUT_FATAL_STYLE: true
+  INPUT_CHECK_UNUSED_FILES: true
+  INPUT_UNUSED_FILES_REPORT_TITLE_PATTERN: "Dart Code Metrics unused files report of $packageName"
 
 jobs:
   analysis:
@@ -105,4 +107,8 @@ jobs:
           name: Tests result
           path: action_app/reports/original.json
           reporter: dart-json
+          list-suites: "all"
+          list-tests: "all"
+          max-annotations: 16
+          fail-on-error: true
           token: ${{ secrets.GITHUB_TOKEN }}
