@@ -18,7 +18,7 @@ This action allows to use Dart Code Metrics from GitHub Actions.
 
 ## What is Dart Code Metrics?
 
-[Dart Code Metrics](https://github.com/dart-code-checker/dart-code-metrics) is a static analysis tool that helps you analyse and improve your code quality.
+[Dart Code Metrics](https://github.com/dart-code-checker/dart-code-metrics) is a static analysis tool that helps you analyze and improve your code quality.
 
 ## Usage
 
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: dart-code-metrics
-        uses: dart-code-checker/dart-code-metrics-action@v2
+        uses: dart-code-checker/dart-code-metrics-action@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```

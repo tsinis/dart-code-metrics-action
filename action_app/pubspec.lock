@@ -7,7 +7,7 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "49.0.0"
+    version: "50.0.0"
   actions_toolkit_dart:
     dependency: "direct main"
     description:
@@ -21,7 +21,7 @@ packages:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.2.0"
   analyzer_plugin:
     dependency: transitive
     description:
@@ -98,7 +98,7 @@ packages:
       name: dart_code_metrics
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.21.3"
+    version: "5.0.1"
   dart_style:
     dependency: transitive
     description:

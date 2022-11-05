@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TAG: v2
+      TAG: v3
       DOCKERFILE: "scripts/Dockerfile"
       IMAGE: dkrutskikh/dart_code_metrics_action
 

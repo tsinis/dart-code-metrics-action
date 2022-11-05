@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-* chore: tune CI/CD
+## 3.0.0
+
+* feat!: Support Dart Code Metrics 3.x.x
 
 ## 2.0.0
 
