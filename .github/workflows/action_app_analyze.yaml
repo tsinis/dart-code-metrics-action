@@ -14,6 +14,10 @@ on:
       - ".github/workflows/action_app_analyze.yaml"
       - "action_app/**"
 
+permissions:
+  statuses: write
+  checks: write
+
 env:
   INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INPUT_FOLDERS: "bin, lib"
