@@ -8,17 +8,17 @@
 
 <img
   src="https://raw.githubusercontent.com/dart-code-checker/dart-code-metrics-action/main/doc/.assets/logo.svg"
-  alt="Dart Code Metrics logo"
+  alt="DCM logo"
   height="150" width="150"
   align="right">
 
-# Dart Code Metrics Action
+# DCM Action
 
-This action allows to use Dart Code Metrics from GitHub Actions.
+This action allows to use DCM from GitHub Actions.
 
-## What is Dart Code Metrics?
+## What is DCM?
 
-[Dart Code Metrics](https://github.com/dart-code-checker/dart-code-metrics) is a static analysis tool that helps you analyze and improve your code quality.
+[DCM](https://github.com/dart-code-checker/dart-code-metrics) is a static analysis tool that helps you analyze and improve your code quality.
 
 ## Usage
 
@@ -27,7 +27,7 @@ Create `dartcodemetrics.yaml` under `.github/workflows` With the following conte
 ### Default configuration
 
 ```yml
-name: Dart Code Metrics
+name: DCM
 
 on: [push]
 
@@ -55,13 +55,13 @@ jobs:
 | **folders**                           |                                                                           | List of folders whose contents will be scanned.                                                                                                                                                                                                                                                                     | [`lib`]                                                 |
 | **relative_path**                     |                                                                           | If your package isn't at the root of the repository, set this input to indicate its location.                                                                                                                                                                                                                       |                                                         |
 | **pull_request_comment**              |                                                                           | Publish detailed report commented directly into your pull request.                                                                                                                                                                                                                                                  | `false`                                                 |
-| **analyze_report_title_pattern**      |                                                                           | Configurable analyze report title pattern.                                                                                                                                                                                                                                                                          | `Dart Code Metrics analyze report of $packageName`      |
+| **analyze_report_title_pattern**      |                                                                           | Configurable analyze report title pattern.                                                                                                                                                                                                                                                                          | `DCM analyze report of $packageName`      |
 | **fatal_warnings**                    |                                                                           | Treat warning level issues as fatal.                                                                                                                                                                                                                                                                                | `false`                                                 |
 | **fatal_performance**                 |                                                                           | Treat performance level issues as fatal.                                                                                                                                                                                                                                                                            | `false`                                                 |
 | **fatal_style**                       |                                                                           | Treat style level issues as fatal.                                                                                                                                                                                                                                                                                  | `false`                                                 |
 | **check_unused_files**                |                                                                           | Additional scan for find unused files in package.                                                                                                                                                                                                                                                                   | `false`                                                 |
 | **check_unused_files_folders**        |                                                                           | List of folders whose contents will be scanned for find unused files.                                                                                                                                                                                                                                               | Taken from `folders` argument                           |
-| **unused_files_report_title_pattern** |                                                                           | Configurable unused files report title pattern.                                                                                                                                                                                                                                                                     | `Dart Code Metrics unused files report of $packageName` |
+| **unused_files_report_title_pattern** |                                                                           | Configurable unused files report title pattern.                                                                                                                                                                                                                                                                     | `DCM unused files report of $packageName` |
 
 ### Output Example
 
