@@ -19,7 +19,7 @@ jobs:
       IMAGE: dkrutskikh/dart_code_metrics_action
 
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.3.0
         with:
           fetch-depth: 1
 
