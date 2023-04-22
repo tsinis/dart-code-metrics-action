@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Install Stable Dart
-        uses: dart-lang/setup-dart@v1.3
+        uses: dart-lang/setup-dart@v1.4
         with:
           sdk: "stable"
 
