@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 4.0.0
+
+* feat!: Migrate on Flutter 3.10.0
+
 ## 3.0.0
 
 * feat!: Support Dart Code Metrics 3.x.x
